@@ -35,5 +35,5 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-.ui-ux-pro-max-skill
-.awesome-design-md
+/ui-ux-pro-max-skill
+/awesome-design-md
