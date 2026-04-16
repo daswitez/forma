@@ -3,6 +3,9 @@ import { motion, useScroll, useTransform, AnimatePresence } from 'motion/react';
 import { AnimatedNumber } from './AnimatedNumber';
 import { useIsMobile } from '../hooks/useIsMobile';
 
+
+
+
 // ─── Demo loop phases ─────────────────────────────────────────────────────────
 type DemoPhase = 'before' | 'audit' | 'after';
 
@@ -734,7 +737,7 @@ export function HeroSection() {
 
           {/* Right: Live demo browser */}
           {!isMobile && (
-            <div style={{ position: 'relative' }}>
+            <div style={{ position: 'relative', marginLeft: 'auto' }}>
               <FloatingBrowserMockup />
             </div>
           )}
