@@ -251,8 +251,15 @@ function CredibilityVisual({ inView }: { inView: boolean }) {
   );
 }
 
-// ─── Visual 3: Conversion — before/after bar chart ────────────────────────────
+// ─── Visual 3: Conversion — 3D retention funnel ──────────────────────────────
 function ConversionVisual({ inView }: { inView: boolean }) {
+  const funnelStages = [
+    { label: 'VISITORS', before: 100, after: 100, unit: '%' },
+    { label: 'ENGAGED', before: 27, after: 64, unit: '%' },
+    { label: 'QUALIFIED', before: 8, after: 31, unit: '%' },
+    { label: 'CONVERTED', before: 0.8, after: 3.2, unit: '%' },
+  ];
+
   return (
     <div style={{
       background: 'rgba(245,242,237,0.03)',
@@ -260,113 +267,181 @@ function ConversionVisual({ inView }: { inView: boolean }) {
       borderRadius: 8,
       padding: '16px',
       marginBottom: 28,
+      perspective: 800,
     }}>
       <div style={{
         fontFamily: 'var(--font-mono)', fontSize: 9,
         color: 'rgba(245,242,237,0.25)', letterSpacing: '0.1em',
         textTransform: 'uppercase', marginBottom: 14,
-      }}>// Conversion rate — 60-day delta</div>
+      }}>// Retention funnel — before vs after</div>
 
-      {/* Bar chart */}
-      <div style={{ display: 'flex', gap: 16, alignItems: 'flex-end', height: 100, marginBottom: 10 }}>
-        {/* Before */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, flex: 1 }}>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={inView ? { opacity: 1 } : {}}
-            transition={{ delay: 0.3 }}
-            style={{
-              fontFamily: 'var(--font-mono)', fontSize: 12,
-              color: 'rgba(239,68,68,0.7)', fontWeight: 700,
-            }}
-          >0.8%</motion.div>
-          <div style={{ width: '100%', position: 'relative', display: 'flex', alignItems: 'flex-end' }}>
-            <motion.div
-              initial={{ height: 0 }}
-              animate={inView ? { height: 22 } : {}}
-              transition={{ delay: 0.4, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-              style={{
-                width: '100%',
-                background: 'rgba(239,68,68,0.25)',
-                border: '1px solid rgba(239,68,68,0.3)',
-                borderRadius: '4px 4px 0 0',
-              }}
-            />
-          </div>
-          <div style={{
-            fontFamily: 'var(--font-mono)', fontSize: 9,
-            color: 'rgba(245,242,237,0.3)', letterSpacing: '0.06em',
-          }}>BEFORE</div>
-        </div>
+      {/* 3D Funnel Container */}
+      <motion.div
+        initial={{ rotateX: 0, opacity: 0 }}
+        animate={inView ? { rotateX: 18, opacity: 1 } : {}}
+        transition={{ delay: 0.2, duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+        style={{
+          transformStyle: 'preserve-3d',
+          transformOrigin: 'center bottom',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 6,
+          marginBottom: 14,
+        }}
+      >
+        {funnelStages.map((stage, i) => {
+          const widthBefore = `${(stage.before / 100) * 100}%`;
+          const widthAfter = `${(stage.after / 100) * 100}%`;
+          const maxWidth = `${100 - i * 12}%`;
 
-        {/* After */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, flex: 1 }}>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={inView ? { opacity: 1 } : {}}
-            transition={{ delay: 0.9 }}
-            style={{
-              fontFamily: 'var(--font-mono)', fontSize: 12,
-              color: 'var(--color-sage)', fontWeight: 700,
-            }}
-          >3.2%</motion.div>
-          <div style={{ width: '100%', display: 'flex', alignItems: 'flex-end' }}>
+          return (
             <motion.div
-              initial={{ height: 0 }}
-              animate={inView ? { height: 80 } : {}}
-              transition={{ delay: 0.6, duration: 1.0, ease: [0.16, 1, 0.3, 1] }}
+              key={stage.label}
+              initial={{ opacity: 0, y: 20 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
+              transition={{ delay: 0.3 + i * 0.15, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
               style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 8,
+                maxWidth,
+                margin: '0 auto',
                 width: '100%',
-                background: 'linear-gradient(to top, var(--color-sage), rgba(74,124,111,0.5))',
-                border: '1px solid rgba(74,124,111,0.4)',
-                borderRadius: '4px 4px 0 0',
-                position: 'relative',
               }}
             >
-              {/* Glow */}
+              {/* Stage label */}
               <div style={{
-                position: 'absolute', top: 0, left: 0, right: 0,
-                height: 3, background: 'rgba(74,124,111,0.8)',
-                borderRadius: '4px 4px 0 0',
-              }} />
-            </motion.div>
-          </div>
-          <div style={{
-            fontFamily: 'var(--font-mono)', fontSize: 9,
-            color: 'rgba(245,242,237,0.3)', letterSpacing: '0.06em',
-          }}>AFTER</div>
-        </div>
+                width: 58, flexShrink: 0,
+                fontFamily: 'var(--font-mono)', fontSize: 7.5,
+                color: i === 3 ? 'rgba(74,124,111,0.7)' : 'rgba(245,242,237,0.3)',
+                letterSpacing: '0.08em',
+                textAlign: 'right',
+                fontWeight: i === 3 ? 700 : 400,
+              }}>{stage.label}</div>
 
-        {/* Delta badge */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8, x: 10 }}
-          animate={inView ? { opacity: 1, scale: 1, x: 0 } : {}}
-          transition={{ delay: 1.3, type: 'spring', stiffness: 360, damping: 24 }}
-          style={{
-            flex: 1,
-            background: 'rgba(40,200,64,0.08)',
-            border: '1px solid rgba(40,200,64,0.22)',
-            borderRadius: 6, padding: '10px 8px',
-            textAlign: 'center', alignSelf: 'center',
-          }}
-        >
-          <div style={{
-            fontFamily: 'var(--font-display)', fontSize: 22, fontWeight: 700,
-            color: '#28C840', lineHeight: 1, marginBottom: 3,
-          }}>+300%</div>
-          <div style={{
-            fontFamily: 'var(--font-mono)', fontSize: 7.5,
-            color: 'rgba(40,200,64,0.6)', letterSpacing: '0.04em',
-          }}>lift</div>
-        </motion.div>
+              {/* Dual bars container */}
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 2 }}>
+                {/* Before bar */}
+                <div style={{ position: 'relative', height: 10, borderRadius: 3, overflow: 'hidden' }}>
+                  <div style={{
+                    position: 'absolute', inset: 0,
+                    background: 'rgba(255,255,255,0.04)',
+                    borderRadius: 3,
+                  }} />
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={inView ? { width: widthBefore } : {}}
+                    transition={{ delay: 0.5 + i * 0.15, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                    style={{
+                      position: 'absolute', top: 0, left: 0, bottom: 0,
+                      background: i === 3 ? 'rgba(239,68,68,0.5)' : 'rgba(239,68,68,0.2)',
+                      borderRadius: 3,
+                    }}
+                  />
+                  <motion.span
+                    initial={{ opacity: 0 }}
+                    animate={inView ? { opacity: 1 } : {}}
+                    transition={{ delay: 1.0 + i * 0.1 }}
+                    style={{
+                      position: 'absolute', right: 4, top: '50%', transform: 'translateY(-50%)',
+                      fontFamily: 'var(--font-mono)', fontSize: 7,
+                      color: 'rgba(239,68,68,0.7)', fontWeight: 600,
+                    }}
+                  >{stage.before}{stage.unit}</motion.span>
+                </div>
+
+                {/* After bar */}
+                <div style={{ position: 'relative', height: 10, borderRadius: 3, overflow: 'hidden' }}>
+                  <div style={{
+                    position: 'absolute', inset: 0,
+                    background: 'rgba(255,255,255,0.04)',
+                    borderRadius: 3,
+                  }} />
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={inView ? { width: widthAfter } : {}}
+                    transition={{ delay: 0.7 + i * 0.15, duration: 1.0, ease: [0.16, 1, 0.3, 1] }}
+                    style={{
+                      position: 'absolute', top: 0, left: 0, bottom: 0,
+                      background: i === 3
+                        ? 'linear-gradient(90deg, var(--color-sage), rgba(74,124,111,0.8))'
+                        : 'rgba(74,124,111,0.4)',
+                      borderRadius: 3,
+                      boxShadow: i === 3 ? '0 0 12px rgba(74,124,111,0.3)' : 'none',
+                    }}
+                  />
+                  <motion.span
+                    initial={{ opacity: 0 }}
+                    animate={inView ? { opacity: 1 } : {}}
+                    transition={{ delay: 1.2 + i * 0.1 }}
+                    style={{
+                      position: 'absolute', right: 4, top: '50%', transform: 'translateY(-50%)',
+                      fontFamily: 'var(--font-mono)', fontSize: 7,
+                      color: '#4A7C6F', fontWeight: 700,
+                    }}
+                  >{stage.after}{stage.unit}</motion.span>
+                </div>
+              </div>
+
+              {/* Delta indicator */}
+              {i > 0 ? (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.5 }}
+                  animate={inView ? { opacity: 1, scale: 1 } : {}}
+                  transition={{ delay: 1.4 + i * 0.12, type: 'spring', stiffness: 400, damping: 20 }}
+                  style={{
+                    width: 36, flexShrink: 0,
+                    background: 'rgba(40,200,64,0.08)',
+                    border: '1px solid rgba(40,200,64,0.2)',
+                    borderRadius: 3, padding: '2px 0',
+                    textAlign: 'center',
+                  }}
+                >
+                  <span style={{
+                    fontFamily: 'var(--font-mono)', fontSize: 7,
+                    color: '#28C840', fontWeight: 700,
+                  }}>+{Math.round(((stage.after - stage.before) / Math.max(stage.before, 0.01)) * 100)}%</span>
+                </motion.div>
+              ) : (
+                <div style={{ width: 36, flexShrink: 0 }} />
+              )}
+            </motion.div>
+          );
+        })}
+      </motion.div>
+
+      {/* Flowing particle trail */}
+      <div style={{
+        display: 'flex', justifyContent: 'center', gap: 4,
+        marginBottom: 10,
+      }}>
+        {[0,1,2,3,4,5,6].map(i => (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0 }}
+            animate={inView ? { opacity: [0, 0.6, 0] } : {}}
+            transition={{ delay: 1.8 + i * 0.08, duration: 1.5, repeat: Infinity, repeatDelay: 1 }}
+            style={{
+              width: 3, height: 3, borderRadius: '50%',
+              background: '#4A7C6F',
+            }}
+          />
+        ))}
       </div>
 
-      {/* Baseline */}
-      <div style={{ height: 1, background: 'rgba(255,255,255,0.08)', borderRadius: 1 }} />
-
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 8 }}>
-        <span style={{ fontFamily: 'var(--font-mono)', fontSize: 8.5, color: 'rgba(245,242,237,0.25)' }}>Same traffic · same ad spend</span>
-        <span style={{ fontFamily: 'var(--font-mono)', fontSize: 8.5, color: 'rgba(245,242,237,0.25)' }}>60-day data</span>
+      {/* Legend */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: 14 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+            <div style={{ width: 12, height: 5, borderRadius: 2, background: 'rgba(239,68,68,0.35)' }} />
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 8, color: 'rgba(245,242,237,0.3)' }}>Before</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+            <div style={{ width: 12, height: 5, borderRadius: 2, background: 'rgba(74,124,111,0.6)' }} />
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 8, color: 'rgba(245,242,237,0.3)' }}>After</span>
+          </div>
+        </div>
+        <span style={{ fontFamily: 'var(--font-mono)', fontSize: 8, color: 'rgba(245,242,237,0.2)' }}>Same traffic · 60-day data</span>
       </div>
     </div>
   );
