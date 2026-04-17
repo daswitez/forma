@@ -9,6 +9,7 @@ import { TransformationSection } from './components/TransformationSection';
 import { ProcessSection } from './components/ProcessSection';
 import { PlatformSection } from './components/PlatformSection';
 import { OutcomesSection } from './components/OutcomesSection';
+import { RetentionFunnelSection } from './components/RetentionFunnelSection';
 import { CaseStudySection } from './components/CaseStudySection';
 import { DifferentiatorSection } from './components/DifferentiatorSection';
 import { FAQSection } from './components/FAQSection';
@@ -45,6 +46,9 @@ export default function App() {
 
       {/* 8 — What changes after the work */}
       <OutcomesSection />
+
+      {/* 8.5 — Retention & conversion funnel (3D visual proof) */}
+      <RetentionFunnelSection />
 
       {/* 9 — Proof: real projects, real results */}
       <CaseStudySection />
