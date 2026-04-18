@@ -1,6 +1,7 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, type TouchEvent } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence, useInView } from 'motion/react';
+import { useIsMobile } from '../hooks/useIsMobile';
 
 type PhaseId = 'before' | 'audit' | 'architecture' | 'design' | 'after';
 
@@ -426,49 +427,54 @@ function BrowserChrome({ phase, clickable }: { phase: PhaseId; clickable?: boole
 }
 
 // ─── Modal Browser Chrome ─────────────────────────────────────────────────────
-function ModalBrowserChrome({ onClose }: { onClose: () => void }) {
+function ModalBrowserChrome({ onClose, compact = false }: { onClose: () => void; compact?: boolean }) {
   return (
     <div style={{ flexShrink: 0 }}>
       {/* Tab strip */}
       <div style={{
         background: '#0F0F11',
-        padding: '8px 16px 0',
+        padding: compact ? '8px 12px 0' : '8px 16px 0',
         display: 'flex', alignItems: 'flex-end', gap: 2,
       }}>
         <div style={{
           background: '#1C1C1E',
           borderRadius: '8px 8px 0 0',
-          padding: '8px 16px 9px',
+          padding: compact ? '8px 12px 9px' : '8px 16px 9px',
           display: 'flex', alignItems: 'center', gap: 7,
+          minWidth: 0,
+          flex: compact ? 1 : '0 1 auto',
         }}>
           <div style={{
             width: 10, height: 10, borderRadius: '50%',
             background: 'linear-gradient(135deg,#4CAF72,#28C840)',
           }} />
           <span style={{
-            fontSize: 12,
+            fontSize: compact ? 11 : 12,
             color: 'rgba(245,242,237,0.82)',
             fontFamily: 'DM Sans, system-ui, sans-serif',
             fontWeight: 500,
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
           }}>Solène Botanics — Live Site</span>
           <span style={{ fontSize: 10, color: 'rgba(245,242,237,0.28)', marginLeft: 6, cursor: 'pointer' }} onClick={onClose}>×</span>
         </div>
-        <div style={{ padding: '5px 12px 9px', fontSize: 13, color: 'rgba(245,242,237,0.2)' }}>+</div>
+        {!compact && <div style={{ padding: '5px 12px 9px', fontSize: 13, color: 'rgba(245,242,237,0.2)' }}>+</div>}
       </div>
 
       {/* Nav bar */}
       <div style={{
         background: '#1C1C1E',
-        padding: '10px 16px',
+        padding: compact ? '9px 12px' : '10px 16px',
         display: 'flex', alignItems: 'center', gap: 10,
         borderBottom: '1px solid rgba(255,255,255,0.05)',
       }}>
-        <div style={{ display: 'flex', gap: 7, flexShrink: 0 }}>
+        {!compact && <div style={{ display: 'flex', gap: 7, flexShrink: 0 }}>
           <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#FF5F57', cursor: 'pointer' }} onClick={onClose} />
           <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#FEBC2E' }} />
           <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#28C840' }} />
-        </div>
-        <div style={{ display: 'flex', gap: 8, flexShrink: 0, marginLeft: 6 }}>
+        </div>}
+        {!compact && <div style={{ display: 'flex', gap: 8, flexShrink: 0, marginLeft: 6 }}>
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
             <path d="M9 3L5 7L9 11" stroke="rgba(245,242,237,0.3)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
@@ -478,22 +484,26 @@ function ModalBrowserChrome({ onClose }: { onClose: () => void }) {
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
             <path d="M12 7A5 5 0 1 1 7 2M7 2L9.5 4.5M7 2L4.5 4.5" stroke="rgba(245,242,237,0.3)" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
-        </div>
+        </div>}
 
         {/* Address bar */}
         <div style={{
           flex: 1, background: '#2A2A2E',
-          borderRadius: 7, padding: '7px 14px',
+          borderRadius: 7, padding: compact ? '7px 10px' : '7px 14px',
           display: 'flex', alignItems: 'center', gap: 8,
           border: '1px solid rgba(40,200,64,0.18)',
+          minWidth: 0,
         }}>
           <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
             <rect x="0.5" y="4" width="9" height="5.5" rx="1.2" stroke="#28C840" strokeWidth="0.9"/>
             <path d="M2.5 4V3A2.5 2.5 0 0 1 7.5 3v1" stroke="#28C840" strokeWidth="0.9"/>
           </svg>
           <span style={{
-            fontSize: 12, fontFamily: 'JetBrains Mono, monospace',
+            fontSize: compact ? 10 : 12, fontFamily: 'JetBrains Mono, monospace',
             color: 'rgba(245,242,237,0.7)', letterSpacing: '0.01em',
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
           }}>www.solenebotanics.com</span>
           <motion.div
             animate={{ opacity: [1, 0.35, 1] }}
@@ -502,16 +512,17 @@ function ModalBrowserChrome({ onClose }: { onClose: () => void }) {
               marginLeft: 'auto',
               display: 'flex', alignItems: 'center', gap: 5,
               background: 'rgba(40,200,64,0.1)', border: '1px solid rgba(40,200,64,0.22)',
-              borderRadius: 4, padding: '2px 7px',
+              borderRadius: 4, padding: compact ? '2px 6px' : '2px 7px',
+              flexShrink: 0,
             }}
           >
             <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#28C840' }} />
-            <span style={{ fontSize: 10, fontFamily: 'JetBrains Mono, monospace', color: '#28C840', fontWeight: 600, letterSpacing: '0.06em' }}>LIVE</span>
+            <span style={{ fontSize: compact ? 9 : 10, fontFamily: 'JetBrains Mono, monospace', color: '#28C840', fontWeight: 600, letterSpacing: '0.06em' }}>LIVE</span>
           </motion.div>
         </div>
 
         {/* Close button */}
-        <button
+        {!compact && <button
           onClick={onClose}
           style={{
             background: 'rgba(255,255,255,0.06)',
@@ -528,14 +539,529 @@ function ModalBrowserChrome({ onClose }: { onClose: () => void }) {
             <path d="M8 2L2 8M2 2L8 8" stroke="rgba(245,242,237,0.5)" strokeWidth="1.4" strokeLinecap="round"/>
           </svg>
           Close
-        </button>
+        </button>}
       </div>
     </div>
   );
 }
 
 // ─── Full Solène Website (modal) ──────────────────────────────────────────────
-function FullSoleneWebsite() {
+function CompactSoleneWebsite() {
+  return (
+    <div style={{ fontFamily: 'system-ui, sans-serif', background: '#FDFAF6', minHeight: 1600, overflowX: 'hidden' }}>
+      <div style={{
+        background: '#111',
+        color: 'rgba(245,242,237,0.72)',
+        fontSize: 9,
+        padding: '8px 12px',
+        letterSpacing: '0.06em',
+        display: 'flex',
+        justifyContent: 'center',
+        gap: 10,
+        flexWrap: 'wrap',
+        textAlign: 'center',
+      }}>
+        <span>Free shipping $65+</span>
+        <span style={{ color: 'rgba(245,242,237,0.22)' }}>•</span>
+        <span>4.9 from 2,847 reviews</span>
+        <span style={{ color: 'rgba(245,242,237,0.22)' }}>•</span>
+        <span>30-day returns</span>
+      </div>
+
+      <nav style={{
+        position: 'sticky', top: 0, zIndex: 20,
+        background: 'rgba(253,250,246,0.94)',
+        backdropFilter: 'blur(10px)',
+        borderBottom: '1px solid rgba(0,0,0,0.06)',
+        padding: '0 14px', height: 54,
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+      }}>
+        <div style={{ display: 'flex', gap: 12, fontSize: 10, color: 'rgba(28,28,28,0.5)' }}>
+          <span>Shop</span>
+          <span>Collections</span>
+          <span>Story</span>
+        </div>
+        <span style={{
+          fontFamily: 'Cormorant Garamond, Georgia, serif',
+          fontSize: 28, fontStyle: 'italic', color: '#1C1C1C', fontWeight: 500,
+        }}>Solène</span>
+        <span style={{ fontSize: 10, color: 'rgba(28,28,28,0.42)' }}>Search</span>
+      </nav>
+
+      <section style={{
+        background: 'linear-gradient(135deg,#F8F1E4 0%,#EDE0CC 55%,#E0D0BC 100%)',
+        padding: '24px 14px 18px',
+      }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 96px', gap: 10, alignItems: 'center' }}>
+          <div>
+            <div style={{
+              fontSize: 9, color: '#8B6E4E',
+              letterSpacing: '0.16em', textTransform: 'uppercase',
+              fontWeight: 700, marginBottom: 10, fontFamily: 'DM Sans, system-ui, sans-serif',
+            }}>Botanical skincare · est. 2019</div>
+            <h1 style={{
+              fontFamily: 'Cormorant Garamond, Georgia, serif',
+              fontSize: 38, lineHeight: 0.95, fontWeight: 700,
+              color: '#1C1C1C', letterSpacing: '-0.025em', marginBottom: 12,
+            }}>
+              Skin that<br />
+              actually <em style={{ fontStyle: 'italic', color: '#4A7C6F' }}>changes.</em>
+            </h1>
+            <p style={{
+              fontSize: 12, color: 'rgba(28,28,28,0.54)', lineHeight: 1.55,
+              marginBottom: 14,
+            }}>
+              Results-driven botanical formulations for brightness, hydration, and texture.
+              Visible change in 14 days.
+            </p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 14 }}>
+              <div style={{ display: 'flex', gap: 1 }}>
+                {[...Array(5)].map((_, i) => <span key={i} style={{ color: '#C8A97A', fontSize: 11 }}>★</span>)}
+              </div>
+              <span style={{ fontSize: 10.5, color: 'rgba(28,28,28,0.52)' }}>4.9 · 2,847 verified reviews</span>
+            </div>
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+              <div style={{
+                background: '#1C1C1C', color: '#FDFAF6',
+                padding: '10px 14px', borderRadius: 3,
+                fontSize: 10, fontWeight: 700, letterSpacing: '0.08em',
+                fontFamily: 'DM Sans, system-ui, sans-serif',
+              }}>Shop Bestsellers</div>
+              <div style={{
+                border: '1px solid rgba(28,28,28,0.14)', color: 'rgba(28,28,28,0.58)',
+                padding: '9px 12px', borderRadius: 3,
+                fontSize: 10, fontWeight: 500, letterSpacing: '0.03em',
+                fontFamily: 'DM Sans, system-ui, sans-serif',
+              }}>Take the skin quiz →</div>
+            </div>
+          </div>
+
+          <div style={{ position: 'relative', display: 'flex', justifyContent: 'center' }}>
+            <div style={{
+              position: 'absolute', inset: '18% 0 auto 0',
+              height: 120,
+              background: 'radial-gradient(ellipse,rgba(200,169,122,0.3) 0%,transparent 70%)',
+            }} />
+            <BottleArt scale={1.05} />
+          </div>
+        </div>
+
+        <div style={{
+          marginTop: 16,
+          display: 'grid',
+          gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+          gap: 8,
+        }}>
+          {[
+            'Clinically tested formulas',
+            'Cruelty-free and vegan',
+            'Dermatologist approved',
+            '30-day glow guarantee',
+          ].map((item) => (
+            <div key={item} style={{
+              background: 'rgba(255,255,255,0.4)',
+              border: '1px solid rgba(255,255,255,0.45)',
+              borderRadius: 10,
+              padding: '10px 12px',
+              fontSize: 10.5,
+              color: 'rgba(28,28,28,0.62)',
+              fontFamily: 'DM Sans, system-ui, sans-serif',
+            }}>
+              {item}
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section style={{ padding: '42px 14px', background: '#FDFAF6' }}>
+        <div style={{ marginBottom: 16 }}>
+          <div style={{ fontSize: 9, color: '#8B6E4E', letterSpacing: '0.16em', textTransform: 'uppercase', fontWeight: 700, marginBottom: 8 }}>Bestsellers</div>
+          <h2 style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: 32, lineHeight: 1.0, color: '#1C1C1C', margin: 0 }}>
+            Most-loved formulas
+          </h2>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 12 }}>
+          {[
+            { name: 'Vitamin C Serum', desc: 'Fades dark spots in 14 days', price: '$48', reviews: '1,240', badge: '#1 Seller', bg: ['#F5EAD8','#DCCAB4'] },
+            { name: 'Deep Renewal Cream', desc: '72-hour hydration support', price: '$52', reviews: '876', badge: 'New', bg: ['#E8D4C4','#D4C0B0'] },
+            { name: 'Clarifying Mask', desc: 'Refines pores without stripping', price: '$36', reviews: '632', badge: null, bg: ['#D8E8D4','#C4D4C0'] },
+            { name: 'Barrier Mist', desc: 'Daily calming hydration', price: '$29', reviews: '514', badge: null, bg: ['#E8E5F1','#D7D1E7'] },
+          ].map((p) => (
+            <div key={p.name} style={{
+              background: 'white', borderRadius: 10, overflow: 'hidden',
+              border: '1px solid rgba(0,0,0,0.05)', boxShadow: '0 3px 18px rgba(0,0,0,0.05)',
+            }}>
+              <div style={{
+                background: `linear-gradient(145deg,${p.bg[0]},${p.bg[1]})`,
+                height: 128, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                position: 'relative',
+              }}>
+                {p.badge && (
+                  <div style={{
+                    position: 'absolute', top: 10, left: 10,
+                    background: p.badge === '#1 Seller' ? '#4A7C6F' : '#8B6E4E',
+                    color: 'white', fontSize: 8, padding: '3px 7px', borderRadius: 999,
+                    fontWeight: 700, letterSpacing: '0.05em', fontFamily: 'DM Sans, system-ui, sans-serif',
+                  }}>{p.badge}</div>
+                )}
+                <BottleArt scale={0.72} />
+              </div>
+              <div style={{ padding: '12px 12px 13px' }}>
+                <div style={{ fontSize: 12.5, fontWeight: 600, color: '#1C1C1C', marginBottom: 4, fontFamily: 'DM Sans, system-ui, sans-serif' }}>{p.name}</div>
+                <div style={{ fontSize: 10.5, color: 'rgba(28,28,28,0.48)', lineHeight: 1.45, marginBottom: 8 }}>{p.desc}</div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 9 }}>
+                  <span style={{ fontSize: 10, color: '#8B6E4E' }}>★ 4.9 ({p.reviews})</span>
+                  <span style={{ fontSize: 14, fontWeight: 700, color: '#1C1C1C', fontFamily: 'Cormorant Garamond, Georgia, serif' }}>{p.price}</span>
+                </div>
+                <div style={{
+                  background: '#1C1C1C', color: '#FDFAF6',
+                  textAlign: 'center', padding: '9px 0', borderRadius: 3,
+                  fontSize: 9.5, fontWeight: 700, letterSpacing: '0.08em', fontFamily: 'DM Sans, system-ui, sans-serif',
+                }}>Add to cart</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section style={{ padding: '42px 14px', background: '#F5F0E8' }}>
+        <div style={{ marginBottom: 16 }}>
+          <div style={{ fontSize: 9, color: '#8B6E4E', letterSpacing: '0.16em', textTransform: 'uppercase', fontWeight: 700, marginBottom: 8 }}>Clinical proof</div>
+          <h2 style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: 32, lineHeight: 1.0, color: '#1C1C1C', margin: 0 }}>
+            Results that build trust
+          </h2>
+        </div>
+
+        <div style={{ display: 'grid', gap: 12 }}>
+          {[
+            { value: '72%', label: 'reduction in dark spots', meta: '6-week Vitamin C study' },
+            { value: '89%', label: 'improvement in hydration', meta: '4-week renewal cream panel' },
+            { value: '58%', label: 'visible pore reduction', meta: '8-week clarifying mask trial' },
+          ].map((item) => (
+            <div key={item.label} style={{
+              background: 'white', borderRadius: 10, padding: '16px 16px 15px',
+              border: '1px solid rgba(0,0,0,0.05)', boxShadow: '0 2px 14px rgba(0,0,0,0.04)',
+            }}>
+              <div style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: 34, color: '#4A7C6F', lineHeight: 1, fontWeight: 700, marginBottom: 6 }}>
+                {item.value}
+              </div>
+              <div style={{ fontSize: 12.5, fontWeight: 600, color: '#1C1C1C', marginBottom: 4, fontFamily: 'DM Sans, system-ui, sans-serif' }}>{item.label}</div>
+              <div style={{ fontSize: 10.5, color: 'rgba(28,28,28,0.45)', fontFamily: 'JetBrains Mono, monospace' }}>{item.meta}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section style={{ padding: '42px 14px', background: '#FCF8F2' }}>
+        <div style={{ marginBottom: 16 }}>
+          <div style={{ fontSize: 9, color: '#8B6E4E', letterSpacing: '0.16em', textTransform: 'uppercase', fontWeight: 700, marginBottom: 8 }}>Bundles</div>
+          <h2 style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: 32, lineHeight: 1.0, color: '#1C1C1C', margin: 0 }}>
+            Rituals that sell together
+          </h2>
+        </div>
+
+        <div style={{ display: 'grid', gap: 12 }}>
+          {[
+            {
+              name: 'Morning Brightening Ritual',
+              items: 'Cleanser · Vitamin C Serum · Barrier Mist',
+              meta: 'Most purchased by first-time customers',
+              price: '$96',
+            },
+            {
+              name: 'Night Repair Ritual',
+              items: 'Renewal Cream · Clarifying Mask · Silk Pouch',
+              meta: 'Top repeat-purchase bundle',
+              price: '$102',
+            },
+          ].map((bundle, index) => (
+            <div
+              key={bundle.name}
+              style={{
+                background: index === 0 ? 'linear-gradient(135deg,#F4EAD8,#E8D9C6)' : 'linear-gradient(135deg,#EFE7DD,#E3D6C8)',
+                borderRadius: 14,
+                padding: '16px 16px 15px',
+                border: '1px solid rgba(0,0,0,0.05)',
+              }}
+            >
+              <div style={{ fontSize: 9, color: '#8B6E4E', letterSpacing: '0.12em', textTransform: 'uppercase', fontWeight: 700, marginBottom: 8 }}>
+                Signature bundle
+              </div>
+              <div style={{ fontSize: 17, color: '#1C1C1C', fontWeight: 600, marginBottom: 6, fontFamily: 'DM Sans, system-ui, sans-serif' }}>
+                {bundle.name}
+              </div>
+              <div style={{ fontSize: 10.5, color: '#4A7C6F', marginBottom: 8, fontFamily: 'JetBrains Mono, monospace', lineHeight: 1.5 }}>
+                {bundle.items}
+              </div>
+              <div style={{ fontSize: 11, color: 'rgba(28,28,28,0.5)', lineHeight: 1.5, marginBottom: 12 }}>
+                {bundle.meta}
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 10 }}>
+                <span style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: 24, color: '#1C1C1C', fontWeight: 700 }}>
+                  {bundle.price}
+                </span>
+                <span style={{
+                  background: '#1C1C1C',
+                  color: '#FDFAF6',
+                  padding: '8px 12px',
+                  borderRadius: 4,
+                  fontSize: 9.5,
+                  fontWeight: 700,
+                  letterSpacing: '0.08em',
+                  fontFamily: 'DM Sans, system-ui, sans-serif',
+                }}>
+                  Add bundle
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section style={{ padding: '42px 14px', background: '#FDFAF6' }}>
+        <div style={{ marginBottom: 16 }}>
+          <div style={{ fontSize: 9, color: '#8B6E4E', letterSpacing: '0.16em', textTransform: 'uppercase', fontWeight: 700, marginBottom: 8 }}>Routine by concern</div>
+          <h2 style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: 32, lineHeight: 1.0, color: '#1C1C1C', margin: 0 }}>
+            Start where your skin is
+          </h2>
+        </div>
+
+        <div style={{ display: 'grid', gap: 12 }}>
+          {[
+            { concern: 'Dullness & pigmentation', steps: 'Cleanse → Vitamin C → Renewal Cream', note: 'Best for uneven tone and post-acne marks' },
+            { concern: 'Dehydration & fine lines', steps: 'Mist → Hyaluronic Serum → Renewal Cream', note: 'Best for loss of bounce and tightness' },
+            { concern: 'Congestion & texture', steps: 'Cleanse → Clarifying Mask → Barrier Mist', note: 'Best for pores, buildup, and rough texture' },
+          ].map((item) => (
+            <div key={item.concern} style={{
+              background: 'linear-gradient(135deg, rgba(245,240,232,0.9), rgba(255,255,255,0.9))',
+              border: '1px solid rgba(0,0,0,0.05)', borderRadius: 10, padding: '14px 14px 13px',
+            }}>
+              <div style={{ fontSize: 12.5, fontWeight: 600, color: '#1C1C1C', marginBottom: 6, fontFamily: 'DM Sans, system-ui, sans-serif' }}>{item.concern}</div>
+              <div style={{ fontSize: 10.5, color: '#4A7C6F', letterSpacing: '0.03em', marginBottom: 6, fontFamily: 'JetBrains Mono, monospace' }}>{item.steps}</div>
+              <div style={{ fontSize: 10.5, color: 'rgba(28,28,28,0.5)', lineHeight: 1.45 }}>{item.note}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section style={{ padding: '42px 14px', background: '#FDFAF6' }}>
+        <div style={{ marginBottom: 16 }}>
+          <div style={{ fontSize: 9, color: '#8B6E4E', letterSpacing: '0.16em', textTransform: 'uppercase', fontWeight: 700, marginBottom: 8 }}>The science</div>
+          <h2 style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: 32, lineHeight: 1.0, color: '#1C1C1C', margin: 0 }}>
+            Key actives
+          </h2>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 12 }}>
+          {[
+            { name: 'Vitamin C', amount: '15%', icon: '◉', color: '#C8A97A', text: 'Brightens and supports collagen.' },
+            { name: 'Hyaluronic Acid', amount: '2%', icon: '◈', color: '#4A7C6F', text: 'Deep hydration across skin layers.' },
+            { name: 'Niacinamide', amount: '10%', icon: '◇', color: '#8B9E7C', text: 'Visibly calms and refines pores.' },
+            { name: 'Bakuchiol', amount: '1%', icon: '❋', color: '#C4956A', text: 'Gentle smoothing without retinol irritation.' },
+          ].map((ing) => (
+            <div key={ing.name} style={{
+              background: 'white', borderRadius: 10, overflow: 'hidden',
+              border: '1px solid rgba(0,0,0,0.05)', boxShadow: '0 2px 14px rgba(0,0,0,0.04)',
+            }}>
+              <div style={{
+                height: 90, background: `linear-gradient(145deg, ${ing.color}18, ${ing.color}0A)`,
+                display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative',
+              }}>
+                <span style={{ fontSize: 28, color: ing.color, opacity: 0.55 }}>{ing.icon}</span>
+                <div style={{
+                  position: 'absolute', top: 8, right: 8,
+                  background: 'rgba(255,255,255,0.84)', borderRadius: 999,
+                  padding: '4px 7px', fontSize: 9, color: ing.color,
+                  fontFamily: 'JetBrains Mono, monospace', fontWeight: 700,
+                }}>{ing.amount}</div>
+              </div>
+              <div style={{ padding: '12px 12px 13px' }}>
+                <div style={{ fontSize: 12.5, fontWeight: 600, color: '#1C1C1C', marginBottom: 5, fontFamily: 'DM Sans, system-ui, sans-serif' }}>{ing.name}</div>
+                <div style={{ fontSize: 10.5, color: 'rgba(28,28,28,0.48)', lineHeight: 1.45 }}>{ing.text}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section style={{ padding: '42px 14px', background: '#F5F0E8' }}>
+        <div style={{ marginBottom: 16 }}>
+          <div style={{ fontSize: 9, color: '#8B6E4E', letterSpacing: '0.16em', textTransform: 'uppercase', fontWeight: 700, marginBottom: 8 }}>Verified reviews</div>
+          <h2 style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: 32, lineHeight: 1.0, color: '#1C1C1C', margin: 0 }}>
+            Customers feel the change
+          </h2>
+        </div>
+
+        <div style={{ display: 'grid', gap: 12 }}>
+          {[
+            {
+              name: 'Sarah M.',
+              text: '"Within 3 weeks my dark spots faded noticeably. This is the first product that felt premium and actually delivered."',
+              product: 'Vitamin C Brightening Serum',
+            },
+            {
+              name: 'Alexandra K.',
+              text: '"The renewal cream feels like a luxury formula but the results are what kept me. My skin stays hydrated all day."',
+              product: 'Deep Renewal Face Cream',
+            },
+          ].map((r, i) => (
+            <div key={r.name} style={{
+              background: 'white', borderRadius: 10, padding: '16px 16px 15px',
+              border: '1px solid rgba(0,0,0,0.05)', boxShadow: '0 2px 14px rgba(0,0,0,0.04)',
+            }}>
+              <div style={{ display: 'flex', gap: 1, marginBottom: 10 }}>
+                {[...Array(5)].map((_, j) => <span key={j} style={{ color: '#C8A97A', fontSize: 12 }}>★</span>)}
+              </div>
+              <p style={{ fontSize: 12, lineHeight: 1.65, color: 'rgba(28,28,28,0.72)', fontStyle: 'italic', marginBottom: 14 }}>{r.text}</p>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 10 }}>
+                <div>
+                  <div style={{ fontSize: 11.5, fontWeight: 600, color: '#1C1C1C', fontFamily: 'DM Sans, system-ui, sans-serif' }}>{r.name}</div>
+                  <div style={{ fontSize: 10, color: 'rgba(28,28,28,0.4)' }}>{r.product}</div>
+                </div>
+                <div style={{
+                  background: i === 0 ? 'rgba(74,124,111,0.08)' : 'rgba(200,169,122,0.12)',
+                  color: i === 0 ? '#4A7C6F' : '#8B6E4E',
+                  fontSize: 9, padding: '4px 8px', borderRadius: 999,
+                  fontWeight: 600, fontFamily: 'DM Sans, system-ui, sans-serif',
+                }}>Verified</div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div style={{ marginTop: 18, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          {['Vogue', 'Byrdie', 'Goop', 'The Zoe Report'].map((logo) => (
+            <div key={logo} style={{
+              background: 'rgba(255,255,255,0.7)', border: '1px solid rgba(0,0,0,0.05)',
+              borderRadius: 999, padding: '7px 12px', fontSize: 10.5,
+              color: 'rgba(28,28,28,0.48)', letterSpacing: '0.08em',
+              textTransform: 'uppercase', fontWeight: 600,
+            }}>
+              {logo}
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section style={{ padding: '42px 14px', background: '#F8F3EB' }}>
+        <div style={{ marginBottom: 16 }}>
+          <div style={{ fontSize: 9, color: '#8B6E4E', letterSpacing: '0.16em', textTransform: 'uppercase', fontWeight: 700, marginBottom: 8 }}>Questions</div>
+          <h2 style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: 32, lineHeight: 1.0, color: '#1C1C1C', margin: 0 }}>
+            What shoppers ask before they buy
+          </h2>
+        </div>
+
+        <div style={{ display: 'grid', gap: 10 }}>
+          {[
+            {
+              question: 'Can I use Vitamin C with sensitive skin?',
+              answer: 'Yes. Our formula is buffered with soothing botanicals and is designed for gradual brightening without daily irritation.',
+            },
+            {
+              question: 'How long before I see visible change?',
+              answer: 'Most customers report brighter tone and smoother texture within 14 days, with deeper results after 4 to 6 weeks.',
+            },
+            {
+              question: 'Which products work best together?',
+              answer: 'We recommend pairing the Vitamin C Serum with Barrier Mist in the morning and Renewal Cream at night for stronger retention and repeat orders.',
+            },
+          ].map((item) => (
+            <div key={item.question} style={{
+              background: 'white',
+              border: '1px solid rgba(0,0,0,0.05)',
+              borderRadius: 10,
+              padding: '14px 14px 13px',
+              boxShadow: '0 2px 14px rgba(0,0,0,0.04)',
+            }}>
+              <div style={{ fontSize: 12, color: '#1C1C1C', fontWeight: 600, lineHeight: 1.5, marginBottom: 6, fontFamily: 'DM Sans, system-ui, sans-serif' }}>
+                {item.question}
+              </div>
+              <div style={{ fontSize: 10.5, color: 'rgba(28,28,28,0.5)', lineHeight: 1.6 }}>
+                {item.answer}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section style={{ padding: '42px 14px', background: '#FDFAF6' }}>
+        <div style={{ marginBottom: 16, textAlign: 'center' }}>
+          <div style={{ fontSize: 9, color: '#8B6E4E', letterSpacing: '0.16em', textTransform: 'uppercase', fontWeight: 700, marginBottom: 8 }}>Community</div>
+          <h2 style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: 32, lineHeight: 1.0, color: '#1C1C1C', margin: 0 }}>#MySoleneGlow</h2>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
+          {['🌿','✨','🧴','🍃','🌸','💧'].map((icon, i) => (
+            <div key={i} style={{
+              background: i % 2 === 0 ? 'linear-gradient(145deg,#F4EAD8,#E6DAC4)' : 'linear-gradient(145deg,#E8DCD0,#D8C8B8)',
+              borderRadius: 10, height: 110,
+              display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+              gap: 8,
+            }}>
+              <span style={{ fontSize: 24 }}>{icon}</span>
+              <span style={{ fontSize: 10.5, color: 'rgba(28,28,28,0.44)' }}>@solene.client{i + 1}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section style={{
+        padding: '44px 14px',
+        background: 'linear-gradient(135deg,#F5F0E8 0%,#EDE8DE 100%)',
+        textAlign: 'center',
+      }}>
+        <div style={{ fontSize: 9, color: '#8B6E4E', letterSpacing: '0.16em', textTransform: 'uppercase', fontWeight: 700, marginBottom: 8 }}>Personalised routine</div>
+        <h2 style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: 32, lineHeight: 1.0, color: '#1C1C1C', marginBottom: 12 }}>
+          Find your perfect routine
+        </h2>
+        <p style={{ fontSize: 12, color: 'rgba(28,28,28,0.5)', lineHeight: 1.55, maxWidth: 280, margin: '0 auto 16px' }}>
+          Answer 5 questions and get a routine tailored to your skin goals in under two minutes.
+        </p>
+        <div style={{
+          display: 'inline-block',
+          background: '#1C1C1C', color: '#FDFAF6',
+          padding: '11px 18px', borderRadius: 3,
+          fontSize: 10.5, fontWeight: 700, letterSpacing: '0.08em', fontFamily: 'DM Sans, system-ui, sans-serif',
+        }}>
+          Take the skin quiz →
+        </div>
+      </section>
+
+      <footer style={{
+        padding: '34px 14px 26px',
+        background: '#111111',
+        color: 'rgba(245,242,237,0.5)',
+        fontFamily: 'DM Sans, system-ui, sans-serif',
+      }}>
+        <div style={{ marginBottom: 22 }}>
+          <div style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: 28, fontStyle: 'italic', color: '#F5F2ED', marginBottom: 10 }}>Solène</div>
+          <p style={{ fontSize: 12, lineHeight: 1.6, color: 'rgba(245,242,237,0.4)', maxWidth: 250 }}>
+            Results-driven botanical skincare with clinically tested formulations and elegant daily rituals.
+          </p>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 18, marginBottom: 20 }}>
+          {[
+            ['Bestsellers', 'New Arrivals', 'Gift Sets'],
+            ['Shipping', 'Returns', 'FAQ'],
+          ].map((group, idx) => (
+            <div key={idx}>
+              {group.map((item) => (
+                <div key={item} style={{ fontSize: 12, color: 'rgba(245,242,237,0.36)', padding: '4px 0' }}>{item}</div>
+              ))}
+            </div>
+          ))}
+        </div>
+        <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: 16, fontSize: 11, color: 'rgba(245,242,237,0.24)' }}>
+          © 2024 Solène Botanics. All rights reserved.
+        </div>
+      </footer>
+    </div>
+  );
+}
+
+function FullSoleneWebsite({ compact = false }: { compact?: boolean }) {
+  if (compact) return <CompactSoleneWebsite />;
+
   return (
     <div style={{ fontFamily: 'system-ui, sans-serif', background: '#FDFAF6', minHeight: 1600 }}>
       {/* Announcement bar */}
@@ -1260,6 +1786,8 @@ function FullSoleneWebsite() {
 
 // ─── Expanded Design Modal ────────────────────────────────────────────────────
 function ExpandedDesignModal({ onClose }: { onClose: () => void }) {
+  const isCompact = useIsMobile(900);
+
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
     document.addEventListener('keydown', handleKey);
@@ -1279,7 +1807,7 @@ function ExpandedDesignModal({ onClose }: { onClose: () => void }) {
       style={{
         position: 'fixed', inset: 0, zIndex: 9999,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        padding: 20,
+        padding: isCompact ? 8 : 20,
       }}
     >
       {/* Backdrop */}
@@ -1303,11 +1831,11 @@ function ExpandedDesignModal({ onClose }: { onClose: () => void }) {
         transition={{ type: 'spring', stiffness: 280, damping: 28, mass: 0.9 }}
         style={{
           position: 'relative',
-          width: '100%', maxWidth: 1100,
-          height: 'calc(100vh - 40px)',
-          maxHeight: 820,
+          width: '100%', maxWidth: isCompact ? '100%' : 1100,
+          height: isCompact ? 'calc(100vh - 16px)' : 'calc(100vh - 40px)',
+          maxHeight: isCompact ? 'none' : 820,
           background: '#1C1C1E',
-          borderRadius: 12,
+          borderRadius: isCompact ? 10 : 12,
           overflow: 'hidden',
           display: 'flex', flexDirection: 'column',
           boxShadow: '0 40px 120px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.07)',
@@ -1320,11 +1848,41 @@ function ExpandedDesignModal({ onClose }: { onClose: () => void }) {
           pointerEvents: 'none', zIndex: 2,
         }} />
 
-        <ModalBrowserChrome onClose={onClose} />
+        {isCompact && (
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close preview"
+            style={{
+              position: 'absolute',
+              top: 10,
+              right: 10,
+              zIndex: 5,
+              width: 36,
+              height: 36,
+              borderRadius: 999,
+              border: '1px solid rgba(255,255,255,0.12)',
+              background: 'rgba(12,12,14,0.86)',
+              color: 'rgba(245,242,237,0.82)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxShadow: '0 12px 32px rgba(0,0,0,0.36)',
+              cursor: 'pointer',
+              backdropFilter: 'blur(10px)',
+            }}
+          >
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+              <path d="M9.5 2.5L2.5 9.5M2.5 2.5L9.5 9.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+            </svg>
+          </button>
+        )}
+
+        <ModalBrowserChrome onClose={onClose} compact={isCompact} />
 
         {/* Website content */}
         <div style={{ flex: 1, overflow: 'auto', background: '#FDFAF6' }}>
-          <FullSoleneWebsite />
+          <FullSoleneWebsite compact={isCompact} />
         </div>
       </motion.div>
     </motion.div>
@@ -1806,7 +2364,7 @@ function PhaseArchitecture() {
 }
 
 // ─── Phase: Design (Component Design) ────────────────────────────────────
-function PhaseDesign() {
+function PhaseDesign({ compact = false }: { compact?: boolean }) {
   return (
     <div style={{ background: '#FDFAF6', height: '100%', overflow: 'hidden', position: 'relative' }}>
       {/* Nav — styled */}
@@ -1815,18 +2373,18 @@ function PhaseDesign() {
         animate={{ opacity: 1 }}
         transition={{ delay: 0.06 }}
         style={{
-          padding: '0 18px', height: 40,
+          padding: compact ? '0 12px' : '0 18px', height: compact ? 34 : 40,
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
           borderBottom: '1px solid rgba(0,0,0,0.05)', background: '#FDFAF6',
         }}
       >
-        <div style={{ display: 'flex', gap: 16, fontSize: 9, color: 'rgba(28,28,28,0.4)', fontFamily: 'DM Sans, system-ui, sans-serif' }}>
+        <div style={{ display: 'flex', gap: compact ? 9 : 16, fontSize: compact ? 7.5 : 9, color: 'rgba(28,28,28,0.4)', fontFamily: 'DM Sans, system-ui, sans-serif' }}>
           <span>Shop</span><span>Our Story</span>
         </div>
-        <span style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: 17, color: '#1C1C1C', fontWeight: 500, letterSpacing: '0.07em', fontStyle: 'italic' }}>Solène</span>
-        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-          <span style={{ fontSize: 9, color: 'rgba(28,28,28,0.4)', fontFamily: 'DM Sans, system-ui, sans-serif' }}>Search</span>
-          <div style={{ background: '#1C1C1C', color: '#FDFAF6', padding: '4px 11px', borderRadius: 2, fontSize: 7.5, letterSpacing: '0.07em', fontWeight: 700, fontFamily: 'DM Sans, system-ui, sans-serif' }}>SHOP</div>
+        <span style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: compact ? 15 : 17, color: '#1C1C1C', fontWeight: 500, letterSpacing: '0.07em', fontStyle: 'italic' }}>Solène</span>
+        <div style={{ display: 'flex', gap: compact ? 6 : 8, alignItems: 'center' }}>
+          {!compact && <span style={{ fontSize: 9, color: 'rgba(28,28,28,0.4)', fontFamily: 'DM Sans, system-ui, sans-serif' }}>Search</span>}
+          <div style={{ background: '#1C1C1C', color: '#FDFAF6', padding: compact ? '3px 8px' : '4px 11px', borderRadius: 2, fontSize: compact ? 6.5 : 7.5, letterSpacing: '0.07em', fontWeight: 700, fontFamily: 'DM Sans, system-ui, sans-serif' }}>SHOP</div>
         </div>
       </motion.div>
 
@@ -1835,18 +2393,18 @@ function PhaseDesign() {
         initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.14 }}
         style={{
           background: 'linear-gradient(128deg,#F6EEE1 0%,#EDE0CF 55%,#E4D3BC 100%)',
-          padding: '16px 18px 13px', display: 'flex', gap: 14, alignItems: 'center',
+          padding: compact ? '12px 12px 10px' : '16px 18px 13px', display: 'flex', gap: compact ? 10 : 14, alignItems: 'center',
         }}
       >
         <div style={{ flex: 1 }}>
           <motion.div
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.24 }}
-            style={{ fontSize: 7, color: '#8B6E4E', letterSpacing: '0.18em', textTransform: 'uppercase', fontWeight: 700, marginBottom: 7, fontFamily: 'DM Sans, system-ui, sans-serif' }}
+            style={{ fontSize: compact ? 6.5 : 7, color: '#8B6E4E', letterSpacing: '0.18em', textTransform: 'uppercase', fontWeight: 700, marginBottom: 7, fontFamily: 'DM Sans, system-ui, sans-serif' }}
           >Botanical Skincare · Est. 2019</motion.div>
 
           <motion.div
             initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.32 }}
-            style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: 25, color: '#1C1C1C', lineHeight: 1.0, fontWeight: 700, letterSpacing: '-0.02em', marginBottom: 9 }}
+            style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: compact ? 19 : 25, color: '#1C1C1C', lineHeight: 1.0, fontWeight: 700, letterSpacing: '-0.02em', marginBottom: 9 }}
           >
             Skin that actually<br />
             <em style={{ fontStyle: 'italic', color: '#4A7C6F' }}>changes.</em>
@@ -1854,7 +2412,7 @@ function PhaseDesign() {
 
           <motion.div
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.42 }}
-            style={{ fontSize: 8.5, color: 'rgba(28,28,28,0.5)', lineHeight: 1.5, marginBottom: 10, maxWidth: 180, fontFamily: 'system-ui, sans-serif' }}
+            style={{ fontSize: compact ? 7 : 8.5, color: 'rgba(28,28,28,0.5)', lineHeight: 1.5, marginBottom: 10, maxWidth: compact ? 120 : 180, fontFamily: 'system-ui, sans-serif' }}
           >Results-driven formulations. No fillers. No promises we cannot keep.</motion.div>
 
           <motion.div
@@ -1862,62 +2420,62 @@ function PhaseDesign() {
             style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 10 }}
           >
             <div style={{ display: 'flex', gap: 1 }}>
-              {[...Array(5)].map((_, i) => <span key={i} style={{ color: '#C8A97A', fontSize: 10 }}>★</span>)}
+              {[...Array(5)].map((_, i) => <span key={i} style={{ color: '#C8A97A', fontSize: compact ? 8 : 10 }}>★</span>)}
             </div>
-            <span style={{ fontSize: 8, color: 'rgba(28,28,28,0.46)', fontFamily: 'DM Sans, system-ui, sans-serif' }}>4.9 · 2,847 verified reviews</span>
+            <span style={{ fontSize: compact ? 6.8 : 8, color: 'rgba(28,28,28,0.46)', fontFamily: 'DM Sans, system-ui, sans-serif' }}>4.9 · 2,847 verified reviews</span>
           </motion.div>
 
           <motion.div
             initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.62 }}
             style={{ display: 'flex', gap: 8, alignItems: 'center' }}
           >
-            <div style={{ background: '#1C1C1C', color: '#FDFAF6', padding: '6px 14px', fontSize: 7.5, fontWeight: 700, letterSpacing: '0.08em', borderRadius: 2, fontFamily: 'DM Sans, system-ui, sans-serif' }}>SHOP BESTSELLERS</div>
-            <div style={{ border: '1px solid rgba(28,28,28,0.18)', color: 'rgba(28,28,28,0.5)', padding: '5px 10px', fontSize: 7.5, borderRadius: 2, fontFamily: 'DM Sans, system-ui, sans-serif' }}>Skin quiz →</div>
+            <div style={{ background: '#1C1C1C', color: '#FDFAF6', padding: compact ? '4.5px 10px' : '6px 14px', fontSize: compact ? 6.8 : 7.5, fontWeight: 700, letterSpacing: '0.08em', borderRadius: 2, fontFamily: 'DM Sans, system-ui, sans-serif' }}>SHOP BESTSELLERS</div>
+            {!compact && <div style={{ border: '1px solid rgba(28,28,28,0.18)', color: 'rgba(28,28,28,0.5)', padding: '5px 10px', fontSize: 7.5, borderRadius: 2, fontFamily: 'DM Sans, system-ui, sans-serif' }}>Skin quiz →</div>}
           </motion.div>
         </div>
 
         <motion.div
           initial={{ opacity: 0, scale: 0.88 }} animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.26, duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
-          style={{ width: 88, flexShrink: 0 }}
+          style={{ width: compact ? 56 : 88, flexShrink: 0 }}
         >
-          <BottleArt scale={1} />
+          <BottleArt scale={compact ? 0.65 : 1} />
         </motion.div>
       </motion.div>
 
       {/* Trust bar */}
       <motion.div
         initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}
-        style={{ background: '#1C1C1C', padding: '6px 18px', display: 'flex', justifyContent: 'space-evenly', alignItems: 'center' }}
+        style={{ background: '#1C1C1C', padding: compact ? '5px 10px' : '6px 18px', display: 'flex', justifyContent: 'space-evenly', alignItems: 'center', gap: compact ? 8 : 0, flexWrap: compact ? 'wrap' : 'nowrap' }}
       >
         {['✓ Free shipping $65+', '✓ 30-day returns', '✓ Clinically tested'].map(t => (
-          <div key={t} style={{ fontSize: 7.5, color: 'rgba(245,242,237,0.55)', fontFamily: 'DM Sans, system-ui, sans-serif' }}>{t}</div>
+          <div key={t} style={{ fontSize: compact ? 6.2 : 7.5, color: 'rgba(245,242,237,0.55)', fontFamily: 'DM Sans, system-ui, sans-serif' }}>{t}</div>
         ))}
       </motion.div>
 
       {/* Products */}
       <motion.div
         initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.62 }}
-        style={{ padding: '10px 18px' }}
+        style={{ padding: compact ? '8px 12px 6px' : '10px 18px' }}
       >
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 7 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: compact ? '1fr 1fr' : '1fr 1fr 1fr', gap: 7 }}>
           {[
             { name: 'Vitamin C Serum', rating: '4.9', reviews: '1,240', price: '$48', badge: '#1 Seller', bg: ['#F5EAD8','#DCCAB4'] },
             { name: 'Renewal Face Cream', rating: '4.8', reviews: '876', price: '$52', badge: null, bg: ['#E8D4C4','#D4C0B0'] },
             { name: 'Botanical Mask', rating: '4.9', reviews: '632', price: '$36', badge: null, bg: ['#D8E8D4','#C4D4C0'] },
           ].map(p => (
             <div key={p.name} style={{ background: 'white', borderRadius: 3, overflow: 'hidden', border: '1px solid rgba(0,0,0,0.05)', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
-              <div style={{ background: `linear-gradient(145deg,${p.bg[0]},${p.bg[1]})`, height: 52, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+              <div style={{ background: `linear-gradient(145deg,${p.bg[0]},${p.bg[1]})`, height: compact ? 40 : 52, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
                 {p.badge && <div style={{ position: 'absolute', top: 3, left: 3, background: '#4A7C6F', color: 'white', fontSize: 6, padding: '2px 4px', borderRadius: 2, fontWeight: 700, fontFamily: 'DM Sans, system-ui, sans-serif' }}>{p.badge}</div>}
-                <BottleArt scale={0.4} />
+                <BottleArt scale={compact ? 0.3 : 0.4} />
               </div>
               <div style={{ padding: '5px 7px' }}>
-                <div style={{ fontSize: 8, color: '#1C1C1C', fontWeight: 500, marginBottom: 2, fontFamily: 'DM Sans, system-ui, sans-serif' }}>{p.name}</div>
+                <div style={{ fontSize: compact ? 7.2 : 8, color: '#1C1C1C', fontWeight: 500, marginBottom: 2, fontFamily: 'DM Sans, system-ui, sans-serif' }}>{p.name}</div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 3 }}>
-                  <div style={{ fontSize: 7, color: '#8B6E4E' }}>★ {p.rating} ({p.reviews})</div>
-                  <div style={{ fontSize: 8, fontWeight: 700, color: '#1C1C1C', fontFamily: 'DM Sans, system-ui, sans-serif' }}>{p.price}</div>
+                  <div style={{ fontSize: compact ? 6.2 : 7, color: '#8B6E4E' }}>★ {p.rating}</div>
+                  <div style={{ fontSize: compact ? 7 : 8, fontWeight: 700, color: '#1C1C1C', fontFamily: 'DM Sans, system-ui, sans-serif' }}>{p.price}</div>
                 </div>
-                <div style={{ background: '#1C1C1C', color: '#FDFAF6', textAlign: 'center', padding: '3px 0', fontSize: 7, letterSpacing: '0.07em', fontWeight: 600, borderRadius: 2, fontFamily: 'DM Sans, system-ui, sans-serif' }}>ADD TO CART</div>
+                <div style={{ background: '#1C1C1C', color: '#FDFAF6', textAlign: 'center', padding: '3px 0', fontSize: compact ? 6.2 : 7, letterSpacing: '0.07em', fontWeight: 600, borderRadius: 2, fontFamily: 'DM Sans, system-ui, sans-serif' }}>ADD TO CART</div>
               </div>
             </div>
           ))}
@@ -1930,21 +2488,27 @@ function PhaseDesign() {
         animate={{ opacity: 1, x: 0, scale: 1 }}
         transition={{ delay: 0.35, duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
         style={{
-          position: 'absolute', top: 8, right: 8,
+          position: 'absolute',
+          top: compact ? undefined : 8,
+          right: compact ? undefined : 8,
+          bottom: compact ? 8 : undefined,
+          left: compact ? '50%' : undefined,
+          transform: compact ? 'translateX(-50%)' : undefined,
           background: 'rgba(10,10,10,0.96)', backdropFilter: 'blur(16px)',
-          borderRadius: 7, padding: '9px 11px',
-          width: 130,
+          borderRadius: 7, padding: compact ? '8px 10px' : '9px 11px',
+          width: compact ? 158 : 130,
+          maxWidth: compact ? 'calc(100% - 18px)' : undefined,
           border: '1px solid rgba(255,255,255,0.08)',
           boxShadow: '0 16px 48px rgba(0,0,0,0.55)',
           zIndex: 20,
         }}
       >
         {/* Header */}
-        <div style={{ fontSize: 6, color: 'rgba(245,242,237,0.3)', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '0.1em', marginBottom: 7, textTransform: 'uppercase' }}>Design System</div>
+        <div style={{ fontSize: compact ? 7 : 6, color: 'rgba(245,242,237,0.3)', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '0.1em', marginBottom: 7, textTransform: 'uppercase' }}>Design System</div>
 
         {/* Colors */}
-        <div style={{ fontSize: 6, color: 'rgba(245,242,237,0.25)', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '0.08em', marginBottom: 4 }}>COLOURS</div>
-        <div style={{ display: 'flex', gap: 3, marginBottom: 8 }}>
+        <div style={{ fontSize: compact ? 6.5 : 6, color: 'rgba(245,242,237,0.25)', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '0.08em', marginBottom: 4 }}>COLOURS</div>
+        <div style={{ display: 'flex', gap: compact ? 4 : 3, marginBottom: 8, justifyContent: compact ? 'space-between' : undefined }}>
           {[
             { color: '#1C1C1C', label: 'Ink' },
             { color: '#4A7C6F', label: 'Sage' },
@@ -1960,25 +2524,25 @@ function PhaseDesign() {
               style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}
             >
               <div style={{
-                width: 16, height: 16, borderRadius: 3,
+                width: compact ? 15 : 16, height: compact ? 15 : 16, borderRadius: 3,
                 background: c.color,
                 border: c.color === '#FDFAF6' ? '1px solid rgba(255,255,255,0.15)' : '1px solid rgba(255,255,255,0.06)',
                 boxShadow: '0 2px 6px rgba(0,0,0,0.25)',
               }} />
-              <span style={{ fontSize: 4.5, color: 'rgba(245,242,237,0.3)', fontFamily: 'JetBrains Mono, monospace' }}>{c.label}</span>
+              {!compact && <span style={{ fontSize: 4.5, color: 'rgba(245,242,237,0.3)', fontFamily: 'JetBrains Mono, monospace' }}>{c.label}</span>}
             </motion.div>
           ))}
         </div>
 
         {/* Typography */}
-        <div style={{ fontSize: 6, color: 'rgba(245,242,237,0.25)', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '0.08em', marginBottom: 4 }}>TYPOGRAPHY</div>
+        <div style={{ fontSize: compact ? 6.5 : 6, color: 'rgba(245,242,237,0.25)', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '0.08em', marginBottom: 4 }}>TYPOGRAPHY</div>
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.9 }}
           style={{ marginBottom: 3 }}
         >
-          <span style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: 10, color: '#F5F2ED', fontStyle: 'italic', fontWeight: 500 }}>Cormorant</span>
+          <span style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: compact ? 11 : 10, color: '#F5F2ED', fontStyle: 'italic', fontWeight: 500 }}>Cormorant</span>
           <span style={{ fontSize: 5, color: 'rgba(245,242,237,0.2)', fontFamily: 'JetBrains Mono, monospace', marginLeft: 4 }}>Display</span>
         </motion.div>
         <motion.div
@@ -1987,12 +2551,12 @@ function PhaseDesign() {
           transition={{ delay: 0.98 }}
           style={{ marginBottom: 8 }}
         >
-          <span style={{ fontFamily: 'DM Sans, system-ui, sans-serif', fontSize: 8, color: 'rgba(245,242,237,0.7)', fontWeight: 500 }}>DM Sans</span>
+          <span style={{ fontFamily: 'DM Sans, system-ui, sans-serif', fontSize: compact ? 8.5 : 8, color: 'rgba(245,242,237,0.7)', fontWeight: 500 }}>DM Sans</span>
           <span style={{ fontSize: 5, color: 'rgba(245,242,237,0.2)', fontFamily: 'JetBrains Mono, monospace', marginLeft: 4 }}>Body</span>
         </motion.div>
 
         {/* Components */}
-        <div style={{ fontSize: 6, color: 'rgba(245,242,237,0.25)', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '0.08em', marginBottom: 4 }}>COMPONENTS</div>
+        <div style={{ fontSize: compact ? 6.5 : 6, color: 'rgba(245,242,237,0.25)', fontFamily: 'JetBrains Mono, monospace', letterSpacing: '0.08em', marginBottom: 4 }}>COMPONENTS</div>
         {[
           { name: 'Navigation', done: true },
           { name: 'Hero module', done: true },
@@ -2000,7 +2564,7 @@ function PhaseDesign() {
           { name: 'Product cards', done: true },
           { name: 'Social proof', done: false },
           { name: 'CTA sections', done: false },
-        ].map((comp, i) => (
+        ].slice(0, compact ? 4 : 6).map((comp, i) => (
           <motion.div
             key={comp.name}
             initial={{ opacity: 0, x: -4 }}
@@ -2009,7 +2573,7 @@ function PhaseDesign() {
             style={{
               display: 'flex', alignItems: 'center', gap: 4,
               padding: '2px 0',
-              fontSize: 6.5, fontFamily: 'DM Sans, system-ui, sans-serif',
+              fontSize: compact ? 7 : 6.5, fontFamily: 'DM Sans, system-ui, sans-serif',
               color: comp.done ? 'rgba(245,242,237,0.5)' : 'rgba(245,242,237,0.2)',
             }}
           >
@@ -2024,7 +2588,7 @@ function PhaseDesign() {
 
 
 // ─── Phase: After ─────────────────────────────────────────────────────────────
-function PhaseAfter({ onOpenModal }: { onOpenModal: () => void }) {
+function PhaseAfter({ onOpenModal, compact = false }: { onOpenModal: () => void; compact?: boolean }) {
   const metrics = [
     { label: 'Conversion rate', before: '0.8%', after: '3.2%', delta: '+300%' },
     { label: 'Revenue / visitor', before: '$0.38', after: '$1.56', delta: '+4.1×' },
@@ -2038,43 +2602,43 @@ function PhaseAfter({ onOpenModal }: { onOpenModal: () => void }) {
       onClick={onOpenModal}
     >
       {/* Nav */}
-      <div style={{ padding: '0 18px', height: 40, display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
-        <div style={{ display: 'flex', gap: 16, fontSize: 9, color: 'rgba(28,28,28,0.4)', fontFamily: 'DM Sans, system-ui, sans-serif' }}>
+      <div style={{ padding: compact ? '0 12px' : '0 18px', height: compact ? 34 : 40, display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
+        <div style={{ display: 'flex', gap: compact ? 9 : 16, fontSize: compact ? 7.5 : 9, color: 'rgba(28,28,28,0.4)', fontFamily: 'DM Sans, system-ui, sans-serif' }}>
           <span>Shop</span><span>Our Story</span>
         </div>
-        <span style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: 17, color: '#1C1C1C', fontWeight: 500, letterSpacing: '0.07em', fontStyle: 'italic' }}>Solène</span>
-        <div style={{ background: '#1C1C1C', color: '#FDFAF6', padding: '4px 11px', borderRadius: 2, fontSize: 7.5, letterSpacing: '0.07em', fontWeight: 700, fontFamily: 'DM Sans, system-ui, sans-serif' }}>SHOP</div>
+        <span style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: compact ? 15 : 17, color: '#1C1C1C', fontWeight: 500, letterSpacing: '0.07em', fontStyle: 'italic' }}>Solène</span>
+        <div style={{ background: '#1C1C1C', color: '#FDFAF6', padding: compact ? '3px 8px' : '4px 11px', borderRadius: 2, fontSize: compact ? 6.5 : 7.5, letterSpacing: '0.07em', fontWeight: 700, fontFamily: 'DM Sans, system-ui, sans-serif' }}>SHOP</div>
       </div>
 
       {/* Hero */}
-      <div style={{ background: 'linear-gradient(128deg,#F6EEE1 0%,#EDE0CF 55%,#E4D3BC 100%)', padding: '14px 18px 11px', display: 'flex', gap: 14, alignItems: 'center' }}>
+      <div style={{ background: 'linear-gradient(128deg,#F6EEE1 0%,#EDE0CF 55%,#E4D3BC 100%)', padding: compact ? '12px 12px 10px' : '14px 18px 11px', display: 'flex', gap: compact ? 10 : 14, alignItems: 'center' }}>
         <div style={{ flex: 1 }}>
-          <div style={{ fontSize: 7, color: '#8B6E4E', letterSpacing: '0.18em', textTransform: 'uppercase', fontWeight: 700, marginBottom: 7, fontFamily: 'DM Sans, system-ui, sans-serif' }}>Botanical Skincare</div>
-          <div style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: 22, color: '#1C1C1C', lineHeight: 1.0, fontWeight: 700, letterSpacing: '-0.02em', marginBottom: 8 }}>
+          <div style={{ fontSize: compact ? 6.5 : 7, color: '#8B6E4E', letterSpacing: '0.18em', textTransform: 'uppercase', fontWeight: 700, marginBottom: 7, fontFamily: 'DM Sans, system-ui, sans-serif' }}>Botanical Skincare</div>
+          <div style={{ fontFamily: 'Cormorant Garamond, Georgia, serif', fontSize: compact ? 19 : 22, color: '#1C1C1C', lineHeight: 1.0, fontWeight: 700, letterSpacing: '-0.02em', marginBottom: 8 }}>
             Skin that actually<br />
             <em style={{ fontStyle: 'italic', color: '#4A7C6F' }}>changes.</em>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginBottom: 8 }}>
-            <div style={{ display: 'flex' }}>{[...Array(5)].map((_, i) => <span key={i} style={{ color: '#C8A97A', fontSize: 9 }}>★</span>)}</div>
-            <span style={{ fontSize: 7.5, color: 'rgba(28,28,28,0.46)', fontFamily: 'system-ui, sans-serif' }}>4.9 · 2,847 reviews</span>
+            <div style={{ display: 'flex' }}>{[...Array(5)].map((_, i) => <span key={i} style={{ color: '#C8A97A', fontSize: compact ? 8 : 9 }}>★</span>)}</div>
+            <span style={{ fontSize: compact ? 6.8 : 7.5, color: 'rgba(28,28,28,0.46)', fontFamily: 'system-ui, sans-serif' }}>4.9 · 2,847 reviews</span>
           </div>
-          <div style={{ background: '#1C1C1C', color: '#FDFAF6', padding: '5.5px 13px', fontSize: 7.5, fontWeight: 700, letterSpacing: '0.08em', borderRadius: 2, display: 'inline-block', fontFamily: 'DM Sans, system-ui, sans-serif' }}>SHOP BESTSELLERS</div>
+          <div style={{ background: '#1C1C1C', color: '#FDFAF6', padding: compact ? '4.5px 10px' : '5.5px 13px', fontSize: compact ? 6.8 : 7.5, fontWeight: 700, letterSpacing: '0.08em', borderRadius: 2, display: 'inline-block', fontFamily: 'DM Sans, system-ui, sans-serif' }}>SHOP BESTSELLERS</div>
         </div>
-        <div style={{ width: 72, flexShrink: 0 }}>
-          <BottleArt scale={0.84} />
+        <div style={{ width: compact ? 56 : 72, flexShrink: 0 }}>
+          <BottleArt scale={compact ? 0.65 : 0.84} />
         </div>
       </div>
 
       {/* Trust bar */}
-      <div style={{ background: '#1C1C1C', padding: '5.5px 18px', display: 'flex', justifyContent: 'space-evenly', alignItems: 'center' }}>
+      <div style={{ background: '#1C1C1C', padding: compact ? '5px 10px' : '5.5px 18px', display: 'flex', justifyContent: 'space-evenly', alignItems: 'center', gap: compact ? 8 : 0, flexWrap: compact ? 'wrap' : 'nowrap' }}>
         {['✓ Free shipping', '✓ 30-day returns', '✓ Clinically tested'].map(t => (
-          <div key={t} style={{ fontSize: 7, color: 'rgba(245,242,237,0.5)', fontFamily: 'DM Sans, system-ui, sans-serif' }}>{t}</div>
+          <div key={t} style={{ fontSize: compact ? 6.2 : 7, color: 'rgba(245,242,237,0.5)', fontFamily: 'DM Sans, system-ui, sans-serif' }}>{t}</div>
         ))}
       </div>
 
       {/* Products strip */}
-      <div style={{ padding: '8px 18px' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 6 }}>
+      <div style={{ padding: compact ? '8px 12px 6px' : '8px 18px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: compact ? '1fr 1fr' : '1fr 1fr 1fr', gap: 6 }}>
           {[
             { name: 'Vitamin C Serum', price: '$48', bg: ['#F5EAD8','#DCCAB4'] },
             { name: 'Renewal Cream', price: '$52', bg: ['#E8D4C4','#D4C0B0'] },
@@ -2082,7 +2646,7 @@ function PhaseAfter({ onOpenModal }: { onOpenModal: () => void }) {
           ].map(p => (
             <div key={p.name} style={{ background: 'white', borderRadius: 3, overflow: 'hidden', border: '1px solid rgba(0,0,0,0.05)' }}>
               <div style={{ background: `linear-gradient(145deg,${p.bg[0]},${p.bg[1]})`, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <BottleArt scale={0.34} />
+                <BottleArt scale={compact ? 0.3 : 0.34} />
               </div>
               <div style={{ padding: '4px 6px' }}>
                 <div style={{ fontSize: 7.5, color: '#1C1C1C', fontWeight: 500, marginBottom: 3, fontFamily: 'DM Sans, system-ui, sans-serif' }}>{p.name}</div>
@@ -2095,6 +2659,25 @@ function PhaseAfter({ onOpenModal }: { onOpenModal: () => void }) {
             </div>
           ))}
         </div>
+
+        {compact && (
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6, marginTop: 6 }}>
+            {[
+              { title: 'Routine finder', body: '5-question quiz tailored to your skin.', accent: '#4A7C6F' },
+              { title: 'Clinical proof', body: '72% reduction in dark spots in 6 weeks.', accent: '#8B6E4E' },
+            ].map((item) => (
+              <div key={item.title} style={{
+                background: 'rgba(245,240,232,0.9)',
+                border: '1px solid rgba(0,0,0,0.05)',
+                borderRadius: 6,
+                padding: '8px 9px',
+              }}>
+                <div style={{ fontSize: 7.5, fontWeight: 700, color: item.accent, marginBottom: 4, letterSpacing: '0.06em', textTransform: 'uppercase' }}>{item.title}</div>
+                <div style={{ fontSize: 7, lineHeight: 1.4, color: 'rgba(28,28,28,0.48)' }}>{item.body}</div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Metrics panel */}
@@ -2103,11 +2686,16 @@ function PhaseAfter({ onOpenModal }: { onOpenModal: () => void }) {
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ delay: 0.3, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
         style={{
-          position: 'absolute', bottom: 10, right: 10,
+          position: 'absolute',
+          bottom: compact ? 8 : 10,
+          left: compact ? '50%' : undefined,
+          right: compact ? undefined : 10,
+          transform: compact ? 'translateX(-50%)' : undefined,
           background: 'rgba(10,10,10,0.96)', backdropFilter: 'blur(16px)',
-          borderRadius: 7, padding: '10px 12px',
+          borderRadius: 7, padding: compact ? '8px 10px' : '10px 12px',
           border: '1px solid rgba(255,255,255,0.07)',
-          width: 192,
+          width: compact ? 158 : 192,
+          maxWidth: compact ? 'calc(100% - 18px)' : undefined,
           boxShadow: '0 24px 64px rgba(0,0,0,0.6)',
         }}
       >
@@ -2130,11 +2718,11 @@ function PhaseAfter({ onOpenModal }: { onOpenModal: () => void }) {
             transition={{ delay: i * 0.09 + 0.5, duration: 0.3 }}
             style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4.5px 0', borderTop: i === 0 ? 'none' : '1px solid rgba(255,255,255,0.04)' }}
           >
-            <span style={{ fontSize: 7.5, color: 'rgba(245,242,237,0.4)', fontFamily: 'DM Sans, system-ui, sans-serif' }}>{m.label}</span>
+            <span style={{ fontSize: compact ? 6.2 : 7.5, color: 'rgba(245,242,237,0.4)', fontFamily: 'DM Sans, system-ui, sans-serif' }}>{m.label}</span>
             <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
-              <span style={{ fontSize: 7, color: 'rgba(245,242,237,0.16)', textDecoration: 'line-through', fontFamily: 'JetBrains Mono, monospace' }}>{m.before}</span>
-              <span style={{ fontSize: 8.5, color: '#4A7C6F', fontWeight: 700, fontFamily: 'JetBrains Mono, monospace' }}>{m.after}</span>
-              <span style={{ fontSize: 6.5, color: '#28C840', background: 'rgba(40,200,64,0.1)', padding: '1px 3.5px', borderRadius: 2, fontFamily: 'JetBrains Mono, monospace', fontWeight: 600 }}>{m.delta}</span>
+              <span style={{ fontSize: compact ? 5.8 : 7, color: 'rgba(245,242,237,0.16)', textDecoration: 'line-through', fontFamily: 'JetBrains Mono, monospace' }}>{m.before}</span>
+              <span style={{ fontSize: compact ? 7.2 : 8.5, color: '#4A7C6F', fontWeight: 700, fontFamily: 'JetBrains Mono, monospace' }}>{m.after}</span>
+              <span style={{ fontSize: compact ? 5.8 : 6.5, color: '#28C840', background: 'rgba(40,200,64,0.1)', padding: '1px 3.5px', borderRadius: 2, fontFamily: 'JetBrains Mono, monospace', fontWeight: 600 }}>{m.delta}</span>
             </div>
           </motion.div>
         ))}
@@ -2146,11 +2734,15 @@ function PhaseAfter({ onOpenModal }: { onOpenModal: () => void }) {
         animate={{ opacity: 1 }}
         transition={{ delay: 0.9 }}
         style={{
-          position: 'absolute', bottom: 10, left: 10,
+          position: 'absolute',
+          bottom: compact ? 92 : 10,
+          left: compact ? '50%' : 10,
+          transform: compact ? 'translateX(-50%)' : undefined,
           background: 'rgba(74,124,111,0.14)',
           border: '1px solid rgba(74,124,111,0.35)',
-          borderRadius: 5, padding: '5px 9px',
+          borderRadius: 5, padding: compact ? '4px 7px' : '5px 9px',
           display: 'flex', alignItems: 'center', gap: 5,
+          maxWidth: compact ? 'calc(100% - 24px)' : undefined,
         }}
       >
         <motion.div
@@ -2158,7 +2750,7 @@ function PhaseAfter({ onOpenModal }: { onOpenModal: () => void }) {
           transition={{ repeat: Infinity, duration: 1.8, ease: 'easeInOut' }}
           style={{ width: 5, height: 5, borderRadius: '50%', background: '#4A7C6F' }}
         />
-        <span style={{ fontSize: 7.5, color: '#4A7C6F', fontFamily: 'DM Sans, system-ui, sans-serif', fontWeight: 600, letterSpacing: '0.04em' }}>Click to view full site ↗</span>
+        <span style={{ fontSize: compact ? 6.5 : 7.5, color: '#4A7C6F', fontFamily: 'DM Sans, system-ui, sans-serif', fontWeight: 600, letterSpacing: '0.04em', whiteSpace: compact ? 'nowrap' : undefined }}>{compact ? 'View full site ↗' : 'Click to view full site ↗'}</span>
       </motion.div>
 
       {/* Live badge */}
@@ -2167,10 +2759,10 @@ function PhaseAfter({ onOpenModal }: { onOpenModal: () => void }) {
         animate={{ opacity: 1 }}
         transition={{ delay: 0.2 }}
         style={{
-          position: 'absolute', top: 44, right: 9,
+          position: 'absolute', top: compact ? 38 : 44, right: 9,
           background: 'rgba(40,200,64,0.09)',
           border: '1px solid rgba(40,200,64,0.22)',
-          color: '#28C840', fontSize: 7, padding: '3px 7px', borderRadius: 3,
+          color: '#28C840', fontSize: compact ? 6.2 : 7, padding: compact ? '2px 5px' : '3px 7px', borderRadius: 3,
           fontFamily: 'JetBrains Mono, monospace', fontWeight: 600, letterSpacing: '0.06em',
           display: 'flex', alignItems: 'center', gap: 4,
         }}
@@ -2183,13 +2775,13 @@ function PhaseAfter({ onOpenModal }: { onOpenModal: () => void }) {
 }
 
 // ─── Mockup Content ───────────────────────────────────────────────────────────
-function MockupContent({ phase, onOpenModal }: { phase: PhaseId; onOpenModal: () => void }) {
+function MockupContent({ phase, onOpenModal, compact = false }: { phase: PhaseId; onOpenModal: () => void; compact?: boolean }) {
   const map: Record<PhaseId, React.ReactElement> = {
     before: <PhaseBefore />,
     audit: <PhaseAudit />,
     architecture: <PhaseArchitecture />,
-    design: <PhaseDesign />,
-    after: <PhaseAfter onOpenModal={onOpenModal} />,
+    design: <PhaseDesign compact={compact} />,
+    after: <PhaseAfter onOpenModal={onOpenModal} compact={compact} />,
   };
   return <>{map[phase]}</>;
 }
@@ -2213,10 +2805,14 @@ export function TransformationSection() {
   const [isPaused, setIsPaused] = useState(false);
   const [animKey, setAnimKey] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
 
   const sectionRef = useRef<HTMLElement>(null);
   const inView = useInView(sectionRef, { once: true, margin: '-100px' });
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const touchStartXRef = useRef<number | null>(null);
+  const touchDeltaXRef = useRef(0);
+  const isMobile = useIsMobile();
 
   const activePhase = PHASE_IDS[activeIndex];
   const activeData = phases[activeIndex];
@@ -2227,14 +2823,47 @@ export function TransformationSection() {
     if (timerRef.current) clearTimeout(timerRef.current);
   };
 
+  const goToPrevious = () => goToIndex(Math.max(activeIndex - 1, 0));
+  const goToNext = () => goToIndex(Math.min(activeIndex + 1, phases.length - 1));
+
   useEffect(() => {
-    if (!inView || isPaused || isModalOpen) return;
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!inView || isPaused || isModalOpen || isMobile) return;
     timerRef.current = setTimeout(() => {
       setActiveIndex((prev) => (prev + 1) % PHASE_IDS.length);
       setAnimKey((k) => k + 1);
     }, PHASE_DURATION);
     return () => { if (timerRef.current) clearTimeout(timerRef.current); };
-  }, [inView, isPaused, activeIndex, isModalOpen]);
+  }, [inView, isPaused, activeIndex, isModalOpen, isMobile]);
+
+  const handleTouchStart = (event: TouchEvent<HTMLDivElement>) => {
+    if (!isMobile) return;
+    touchStartXRef.current = event.touches[0]?.clientX ?? null;
+    touchDeltaXRef.current = 0;
+  };
+
+  const handleTouchMove = (event: TouchEvent<HTMLDivElement>) => {
+    if (!isMobile || touchStartXRef.current === null) return;
+    touchDeltaXRef.current = (event.touches[0]?.clientX ?? touchStartXRef.current) - touchStartXRef.current;
+  };
+
+  const handleTouchEnd = () => {
+    if (!isMobile) return;
+
+    if (Math.abs(touchDeltaXRef.current) > 42) {
+      if (touchDeltaXRef.current < 0) {
+        goToNext();
+      } else {
+        goToPrevious();
+      }
+    }
+
+    touchStartXRef.current = null;
+    touchDeltaXRef.current = 0;
+  };
 
   return (
     <>
@@ -2317,12 +2946,15 @@ export function TransformationSection() {
                 transition: 'box-shadow 0.5s ease',
               }}
             >
-              <ProgressBar animKey={animKey} isPaused={isPaused} />
+              <ProgressBar animKey={animKey} isPaused={isPaused || isMobile} />
               <BrowserChrome phase={activePhase} clickable={activePhase === 'after'} />
 
               <div
                 className="transformation-browser-content"
-                style={{ height: 506 }}
+                style={{ height: isMobile ? 360 : 506 }}
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
               >
                 <AnimatePresence mode="wait">
                   <motion.div
@@ -2333,11 +2965,95 @@ export function TransformationSection() {
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.3 }}
                   >
-                    <MockupContent phase={activePhase} onOpenModal={() => setIsModalOpen(true)} />
+                    <MockupContent phase={activePhase} onOpenModal={() => setIsModalOpen(true)} compact={isMobile} />
                   </motion.div>
                 </AnimatePresence>
               </div>
             </motion.div>
+
+            {isMobile && (
+              <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                animate={inView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.5, delay: 0.22 }}
+                style={{
+                  order: 2,
+                  display: 'grid',
+                  gap: 10,
+                }}
+              >
+                <div
+                  style={{
+                    textAlign: 'center',
+                  }}
+                >
+                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, color: 'rgba(200,169,122,0.5)', letterSpacing: '0.12em', marginBottom: 5 }}>
+                    TAP A PHASE OR SWIPE THE PREVIEW
+                  </div>
+                  <div style={{ fontSize: 12, color: 'rgba(245,242,237,0.52)', lineHeight: 1.5 }}>
+                    Cambia entre cada etapa del proceso y mira cómo evoluciona el sitio.
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: '40px 1fr 40px',
+                    gap: 10,
+                    alignItems: 'center',
+                  }}
+                >
+                  <button
+                    onClick={goToPrevious}
+                    disabled={activeIndex === 0}
+                    style={{
+                      height: 40,
+                      borderRadius: 999,
+                      border: '1px solid rgba(255,255,255,0.1)',
+                      background: activeIndex === 0 ? 'rgba(255,255,255,0.02)' : 'rgba(255,255,255,0.05)',
+                      color: activeIndex === 0 ? 'rgba(245,242,237,0.22)' : 'rgba(245,242,237,0.72)',
+                      fontSize: 18,
+                      cursor: activeIndex === 0 ? 'default' : 'pointer',
+                    }}
+                  >
+                    ‹
+                  </button>
+
+                  <div
+                    style={{
+                      background: 'rgba(255,255,255,0.04)',
+                      border: '1px solid rgba(255,255,255,0.08)',
+                      borderRadius: 999,
+                      padding: '9px 14px',
+                      textAlign: 'center',
+                    }}
+                  >
+                    <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, color: 'rgba(245,242,237,0.26)', letterSpacing: '0.08em', marginBottom: 4 }}>
+                      STEP {String(activeIndex + 1).padStart(2, '0')} / {String(phases.length).padStart(2, '0')}
+                    </div>
+                    <div style={{ fontFamily: 'var(--font-headline)', fontSize: 13, color: 'rgba(245,242,237,0.82)', fontWeight: 600 }}>
+                      {activeData.label}
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={goToNext}
+                    disabled={activeIndex === phases.length - 1}
+                    style={{
+                      height: 40,
+                      borderRadius: 999,
+                      border: '1px solid rgba(255,255,255,0.1)',
+                      background: activeIndex === phases.length - 1 ? 'rgba(255,255,255,0.02)' : 'rgba(255,255,255,0.05)',
+                      color: activeIndex === phases.length - 1 ? 'rgba(245,242,237,0.22)' : 'rgba(245,242,237,0.72)',
+                      fontSize: 18,
+                      cursor: activeIndex === phases.length - 1 ? 'default' : 'pointer',
+                    }}
+                  >
+                    ›
+                  </button>
+                </div>
+              </motion.div>
+            )}
 
             {/* Description panel */}
             <motion.div
@@ -2357,6 +3073,57 @@ export function TransformationSection() {
                   <div className="transformation-desc-number">{activeData.number}</div>
                   <h3 className="transformation-desc-headline">{activeData.headline}</h3>
                   <p className="transformation-desc-body">{activeData.description}</p>
+
+                  {isMobile && (
+                    <div
+                      style={{
+                        marginTop: 18,
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
+                        gap: 10,
+                      }}
+                    >
+                      {[
+                        { label: 'Phase', value: activeData.label },
+                        { label: 'Focus', value: activeData.sublabel },
+                        { label: 'Status', value: activePhase === 'after' ? 'Live results' : 'In progress' },
+                      ].map((item) => (
+                        <div
+                          key={item.label}
+                          style={{
+                            background: 'rgba(255,255,255,0.04)',
+                            border: '1px solid rgba(255,255,255,0.08)',
+                            borderRadius: 6,
+                            padding: '10px 12px',
+                          }}
+                        >
+                          <div
+                            style={{
+                              fontFamily: 'var(--font-mono)',
+                              fontSize: 9,
+                              color: 'rgba(245,242,237,0.28)',
+                              letterSpacing: '0.08em',
+                              marginBottom: 5,
+                              textTransform: 'uppercase',
+                            }}
+                          >
+                            {item.label}
+                          </div>
+                          <div
+                            style={{
+                              fontFamily: 'var(--font-headline)',
+                              fontSize: 12,
+                              fontWeight: 500,
+                              color: 'rgba(245,242,237,0.78)',
+                              lineHeight: 1.35,
+                            }}
+                          >
+                            {item.value}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
 
                   {activePhase === 'after' && (
                     <motion.div
@@ -2425,7 +3192,7 @@ export function TransformationSection() {
       </section>
 
       {/* Modal — rendered via portal */}
-      {typeof document !== 'undefined' && createPortal(
+      {isMounted && createPortal(
         <AnimatePresence>
           {isModalOpen && (
             <ExpandedDesignModal onClose={() => setIsModalOpen(false)} />

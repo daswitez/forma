@@ -1,7 +1,6 @@
 import { useRef, useState, useEffect } from 'react';
 import { motion, useInView, AnimatePresence } from 'motion/react';
 import { HeadlineReveal } from './HeadlineReveal';
-import { AnimatedNumber } from './AnimatedNumber';
 import { useIsMobile } from '../hooks/useIsMobile';
 
 // ─── Funnel stage data ────────────────────────────────────────────────────────
@@ -43,6 +42,8 @@ const FUNNEL_STAGES = [
   },
 ];
 
+const MOBILE_STAGE_WIDTHS = [100, 96, 92, 88, 84];
+
 // ─── Floating particle component ──────────────────────────────────────────────
 function FlowParticle({ delay, x, duration, color }: { delay: number; x: number; duration: number; color: string }) {
   return (
@@ -67,11 +68,13 @@ function FunnelStageRow({
   index,
   showAfter,
   inView,
+  isMobile,
 }: {
   stage: typeof FUNNEL_STAGES[0];
   index: number;
   showAfter: boolean;
   inView: boolean;
+  isMobile: boolean;
 }) {
   const isFirst = index === 0;
   const isLast = index === FUNNEL_STAGES.length - 1;
@@ -79,6 +82,7 @@ function FunnelStageRow({
   const dropoffAfter = isFirst ? 0 : Math.round((1 - stage.after.value / FUNNEL_STAGES[index - 1].after.value) * 100);
   const currentDropoff = showAfter ? dropoffAfter : dropoffBefore;
   const currentValue = showAfter ? stage.after : stage.before;
+  const stageWidth = isMobile ? MOBILE_STAGE_WIDTHS[index] : stage.widthPct;
 
   return (
     <motion.div
@@ -89,32 +93,38 @@ function FunnelStageRow({
         display: 'flex',
         alignItems: 'center',
         gap: 0,
-        width: `${stage.widthPct}%`,
+        width: `${stageWidth}%`,
         margin: '0 auto',
         position: 'relative',
       }}
     >
       {/* Stage bar */}
       <motion.div
-        layout
+        layout={!isMobile}
         style={{
           flex: 1,
-          height: isLast ? 56 : 52,
-          borderRadius: isFirst ? '12px 12px 4px 4px' : isLast ? '4px 4px 12px 12px' : 4,
+          height: isMobile ? (isLast ? 78 : 74) : (isLast ? 66 : 62),
+          borderRadius: isFirst ? '14px 14px 6px 6px' : isLast ? '6px 6px 14px 14px' : 6,
           overflow: 'hidden',
           position: 'relative',
           border: isLast
-            ? `2px solid ${showAfter ? 'rgba(74,124,111,0.6)' : 'rgba(239,68,68,0.3)'}`
-            : '1px solid rgba(245,242,237,0.08)',
+            ? `2px solid ${showAfter ? 'rgba(74,124,111,0.75)' : 'rgba(239,68,68,0.55)'}`
+            : isMobile
+              ? '1px solid rgba(245,242,237,0.16)'
+              : '1px solid rgba(245,242,237,0.08)',
           transition: 'border-color 0.6s ease',
+          background: isMobile ? 'rgba(22, 22, 28, 0.94)' : undefined,
+          boxShadow: isMobile ? '0 10px 28px rgba(0,0,0,0.22)' : undefined,
         }}
       >
         {/* Background */}
         <div style={{
           position: 'absolute', inset: 0,
           background: isLast
-            ? (showAfter ? 'rgba(74,124,111,0.12)' : 'rgba(239,68,68,0.06)')
-            : 'rgba(245,242,237,0.03)',
+            ? (showAfter
+              ? (isMobile ? 'rgba(74,124,111,0.22)' : 'rgba(74,124,111,0.12)')
+              : (isMobile ? 'rgba(239,68,68,0.14)' : 'rgba(239,68,68,0.06)'))
+            : (isMobile ? 'rgba(245,242,237,0.08)' : 'rgba(245,242,237,0.03)'),
           transition: 'background 0.6s ease',
         }} />
 
@@ -130,11 +140,15 @@ function FunnelStageRow({
             position: 'absolute', top: 0, left: 0, bottom: 0,
             background: showAfter
               ? (isLast
-                ? 'linear-gradient(90deg, rgba(74,124,111,0.5), rgba(74,124,111,0.3))'
-                : 'rgba(74,124,111,0.15)')
+                ? (isMobile
+                  ? 'linear-gradient(90deg, rgba(74,124,111,0.72), rgba(74,124,111,0.42))'
+                  : 'linear-gradient(90deg, rgba(74,124,111,0.5), rgba(74,124,111,0.3))')
+                : (isMobile ? 'rgba(74,124,111,0.28)' : 'rgba(74,124,111,0.15)'))
               : (isLast
-                ? 'linear-gradient(90deg, rgba(239,68,68,0.3), rgba(239,68,68,0.15))'
-                : 'rgba(239,68,68,0.08)'),
+                ? (isMobile
+                  ? 'linear-gradient(90deg, rgba(239,68,68,0.48), rgba(239,68,68,0.24))'
+                  : 'linear-gradient(90deg, rgba(239,68,68,0.3), rgba(239,68,68,0.15))')
+                : (isMobile ? 'rgba(239,68,68,0.18)' : 'rgba(239,68,68,0.08)')),
             transition: 'background 0.6s ease',
           }}
         />
@@ -143,40 +157,82 @@ function FunnelStageRow({
         <div style={{
           position: 'relative', zIndex: 2,
           display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-          height: '100%', padding: '0 20px',
+          height: '100%', padding: isMobile ? '0 14px' : '0 18px',
         }}>
           {/* Left: label + description */}
-          <div>
+          <div style={{ minWidth: 0, paddingRight: 10 }}>
             <div style={{
-              fontFamily: 'var(--font-headline)', fontSize: isLast ? 16 : 14, fontWeight: 600,
+              fontFamily: 'var(--font-headline)', fontSize: isMobile ? (isLast ? 15 : 13) : (isLast ? 17 : 15), fontWeight: 600,
               color: isLast
                 ? (showAfter ? '#4A7C6F' : 'rgba(239,68,68,0.8)')
-                : 'rgba(245,242,237,0.8)',
+                : isMobile ? 'rgba(245,242,237,0.92)' : 'rgba(245,242,237,0.8)',
               transition: 'color 0.4s ease',
-              marginBottom: 2,
+              marginBottom: 3,
+              lineHeight: 1.15,
             }}>{stage.label}</div>
             <div style={{
-              fontFamily: 'var(--font-mono)', fontSize: 9,
-              color: 'rgba(245,242,237,0.25)', letterSpacing: '0.04em',
+              fontFamily: 'var(--font-mono)', fontSize: isMobile ? 9.5 : 10,
+              color: isMobile ? 'rgba(245,242,237,0.56)' : 'rgba(245,242,237,0.38)', letterSpacing: '0.04em',
+              lineHeight: 1.35,
             }}>{stage.description}</div>
           </div>
 
           {/* Right: value */}
-          <div style={{ textAlign: 'right' }}>
+          <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6, flexShrink: 0 }}>
             <motion.div
               key={currentValue.display}
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4 }}
               style={{
-                fontFamily: 'var(--font-display)', fontSize: isLast ? 28 : 22, fontWeight: 700,
+                fontFamily: 'var(--font-display)', fontSize: isMobile ? (isLast ? 26 : 22) : (isLast ? 32 : 24), fontWeight: 700,
                 color: isLast
                   ? (showAfter ? '#4A7C6F' : 'rgba(239,68,68,0.7)')
-                  : 'var(--color-warm-white)',
+                  : isMobile ? 'rgba(255,255,255,0.96)' : 'var(--color-warm-white)',
                 lineHeight: 1,
                 transition: 'color 0.4s ease',
               }}
             >{currentValue.display}</motion.div>
+
+            {!isFirst && (
+              <motion.div
+                key={`${stage.label}-${currentDropoff}-${showAfter ? 'after' : 'before'}`}
+                initial={{ opacity: 0, y: 4 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.28 }}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  background: showAfter ? 'rgba(74,124,111,0.12)' : 'rgba(239,68,68,0.1)',
+                  border: `1px solid ${showAfter ? 'rgba(74,124,111,0.24)' : 'rgba(239,68,68,0.2)'}`,
+                  borderRadius: 999,
+                  padding: isMobile ? '3px 7px' : '4px 8px',
+                }}
+              >
+                <span
+                  style={{
+                    width: 4,
+                    height: 4,
+                    borderRadius: '50%',
+                    background: showAfter ? '#4A7C6F' : '#EF4444',
+                    flexShrink: 0,
+                  }}
+                />
+                <span
+                  style={{
+                    fontFamily: 'var(--font-mono)',
+                    fontSize: isMobile ? 9 : 9.5,
+                    fontWeight: 600,
+                    color: showAfter ? 'rgba(148, 217, 195, 0.92)' : 'rgba(255, 158, 158, 0.88)',
+                    letterSpacing: '0.04em',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  -{currentDropoff}% drop-off
+                </span>
+              </motion.div>
+            )}
           </div>
         </div>
 
@@ -188,44 +244,13 @@ function FunnelStageRow({
             transition={{ duration: 0.8 }}
             style={{
               position: 'absolute', inset: -1,
-              borderRadius: '4px 4px 12px 12px',
+              borderRadius: '6px 6px 14px 14px',
               boxShadow: '0 0 30px rgba(74,124,111,0.2), inset 0 0 20px rgba(74,124,111,0.05)',
               pointerEvents: 'none',
             }}
           />
         )}
       </motion.div>
-
-      {/* Drop-off indicator (right side) */}
-      {!isFirst && (
-        <motion.div
-          initial={{ opacity: 0, x: -8 }}
-          animate={inView ? { opacity: 1, x: 0 } : {}}
-          transition={{ delay: 0.5 + index * 0.12 }}
-          style={{
-            position: 'absolute', right: -80,
-            display: 'flex', alignItems: 'center', gap: 6,
-            width: 70,
-          }}
-        >
-          <div style={{
-            width: 16, height: 1,
-            background: showAfter ? 'rgba(74,124,111,0.3)' : 'rgba(239,68,68,0.2)',
-            transition: 'background 0.4s ease',
-          }} />
-          <motion.span
-            key={currentDropoff}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            style={{
-              fontFamily: 'var(--font-mono)', fontSize: 10, fontWeight: 600,
-              color: showAfter ? 'rgba(74,124,111,0.6)' : 'rgba(239,68,68,0.5)',
-              transition: 'color 0.4s ease',
-              whiteSpace: 'nowrap',
-            }}
-          >-{currentDropoff}%</motion.span>
-        </motion.div>
-      )}
     </motion.div>
   );
 }
@@ -239,13 +264,10 @@ export function RetentionFunnelSection() {
 
   // Auto-toggle after first view
   useEffect(() => {
-    if (!inView) return;
+    if (!inView || isMobile) return;
     const timer = setTimeout(() => setShowAfter(true), 2800);
     return () => clearTimeout(timer);
-  }, [inView]);
-
-  const convBefore = 80;
-  const convAfter = 320;
+  }, [inView, isMobile]);
 
   return (
     <section
@@ -311,23 +333,36 @@ export function RetentionFunnelSection() {
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ delay: 0.4, duration: 0.5 }}
           style={{
-            display: 'flex', justifyContent: 'center', marginBottom: 48,
+            display: 'flex', justifyContent: 'center', marginBottom: 40,
           }}
         >
-          <div style={{
-            display: 'inline-flex',
-            background: 'rgba(245,242,237,0.05)',
-            border: '1px solid rgba(245,242,237,0.1)',
-            borderRadius: 8, padding: 4,
-            position: 'relative',
-          }}>
+          <div style={{ textAlign: 'center' }}>
+            <div
+              style={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: 10,
+                color: 'rgba(245,242,237,0.3)',
+                letterSpacing: '0.08em',
+                marginBottom: 10,
+                textTransform: 'uppercase',
+              }}
+            >
+              Compare states
+            </div>
+            <div style={{
+              display: 'inline-flex',
+              background: 'rgba(245,242,237,0.05)',
+              border: '1px solid rgba(245,242,237,0.1)',
+              borderRadius: 10, padding: 4,
+              position: 'relative',
+            }}>
             {/* Sliding indicator */}
             <motion.div
               layout
               style={{
                 position: 'absolute', top: 4, bottom: 4,
                 width: 'calc(50% - 4px)',
-                borderRadius: 6,
+                borderRadius: 8,
                 background: showAfter ? 'rgba(74,124,111,0.2)' : 'rgba(239,68,68,0.12)',
                 border: `1px solid ${showAfter ? 'rgba(74,124,111,0.4)' : 'rgba(239,68,68,0.25)'}`,
                 left: showAfter ? 'calc(50% + 2px)' : 4,
@@ -335,40 +370,44 @@ export function RetentionFunnelSection() {
               }}
             />
             <button
+              type="button"
               onClick={() => setShowAfter(false)}
               style={{
                 position: 'relative', zIndex: 1,
-                padding: '10px 28px', border: 'none', background: 'transparent',
-                fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 600,
+                padding: isMobile ? '12px 26px' : '12px 34px', border: 'none', background: 'transparent',
+                fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 700,
                 letterSpacing: '0.08em', textTransform: 'uppercase',
                 color: !showAfter ? 'rgba(239,68,68,0.8)' : 'rgba(245,242,237,0.35)',
                 cursor: 'pointer', transition: 'color 0.3s ease',
               }}
             >
-              Before Repositioning
+              Before
             </button>
             <button
+              type="button"
               onClick={() => setShowAfter(true)}
               style={{
                 position: 'relative', zIndex: 1,
-                padding: '10px 28px', border: 'none', background: 'transparent',
-                fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 600,
+                padding: isMobile ? '12px 26px' : '12px 34px', border: 'none', background: 'transparent',
+                fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 700,
                 letterSpacing: '0.08em', textTransform: 'uppercase',
                 color: showAfter ? '#4A7C6F' : 'rgba(245,242,237,0.35)',
                 cursor: 'pointer', transition: 'color 0.3s ease',
               }}
             >
-              After Repositioning
+              After
             </button>
+          </div>
           </div>
         </motion.div>
 
         {/* ════════════ 3D FUNNEL ════════════ */}
         <div style={{
-          perspective: 1200,
+          perspective: isMobile ? 'none' : 1200,
           maxWidth: 700,
           margin: '0 auto',
           position: 'relative',
+          width: '100%',
         }}>
           {/* Floating particles */}
           {!isMobile && inView && (
@@ -378,7 +417,7 @@ export function RetentionFunnelSection() {
                   key={`p-${i}-${showAfter}`}
                   delay={i * 0.4}
                   x={180 + Math.sin(i * 1.3) * 140}
-                  duration={3 + Math.random() * 1.5}
+                  duration={3 + (i % 4) * 0.35}
                   color={showAfter ? 'rgba(74,124,111,0.6)' : 'rgba(239,68,68,0.4)'}
                 />
               ))}
@@ -388,15 +427,16 @@ export function RetentionFunnelSection() {
           {/* The isometric funnel */}
           <motion.div
             initial={{ rotateX: 0, opacity: 0 }}
-            animate={inView ? { rotateX: isMobile ? 8 : 22, opacity: 1 } : {}}
+            animate={inView ? { rotateX: isMobile ? 0 : 10, opacity: 1 } : {}}
             transition={{ delay: 0.3, duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
             style={{
               transformStyle: 'preserve-3d',
               transformOrigin: 'center top',
               display: 'flex',
               flexDirection: 'column',
-              gap: 6,
-              paddingRight: isMobile ? 0 : 80,
+              gap: isMobile ? 10 : 8,
+              paddingRight: 0,
+              opacity: isMobile ? 1 : undefined,
             }}
           >
             {FUNNEL_STAGES.map((stage, i) => (
@@ -406,6 +446,7 @@ export function RetentionFunnelSection() {
                 index={i}
                 showAfter={showAfter}
                 inView={inView}
+                isMobile={isMobile}
               />
             ))}
           </motion.div>

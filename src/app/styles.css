@@ -654,6 +654,7 @@
   overflow: hidden;
   box-shadow: 0 40px 120px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255,255,255,0.08);
   position: relative;
+  min-width: 0;
 }
 
 .transformation-progress-track {
@@ -687,6 +688,7 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
+  min-width: 0;
 }
 
 .transformation-desc-number {
@@ -1879,9 +1881,46 @@
 
   /* Transformation section */
   .transformation-layout { grid-template-columns: 1fr !important; gap: 24px !important; }
-  .transformation-phases { padding-top: 0; flex-direction: row; flex-wrap: wrap; gap: 8px; }
-  .transformation-description { padding-top: 16px; }
-  .transformation-browser-wrap { display: none; }
+  .transformation-browser-wrap {
+    display: block;
+    order: 1;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 360px;
+    margin: 0 auto;
+    justify-self: center;
+  }
+  .transformation-phases {
+    order: 3;
+    padding-top: 0;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 10px;
+    overflow-x: auto;
+    padding-bottom: 6px;
+    padding-inline: 2px 20px;
+    scrollbar-width: none;
+    scroll-snap-type: x proximity;
+  }
+  .transformation-phases::-webkit-scrollbar { display: none; }
+  .transformation-phase-tab {
+    min-width: 220px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 8px;
+    padding: 14px 15px;
+    flex-shrink: 0;
+    scroll-snap-align: center;
+  }
+  .phase-tab-number { font-size: 11px; }
+  .phase-tab-label { font-size: 13px; color: rgba(245, 242, 237, 0.66); }
+  .transformation-description {
+    order: 4;
+    padding-top: 6px;
+  }
+  .transformation-desc-headline { font-size: 20px; }
+  .transformation-desc-body { font-size: 15px; line-height: 1.7; }
+  .transformation-dots { justify-content: center; }
 }
 
 @media (max-width: 480px) {

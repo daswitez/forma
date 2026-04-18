@@ -5,10 +5,7 @@ import { useState, useEffect } from 'react';
  * Uses matchMedia so it only fires on actual resize transitions, not every scroll.
  */
 export function useIsMobile(breakpoint = 768): boolean {
-  const [isMobile, setIsMobile] = useState<boolean>(() => {
-    if (typeof window === 'undefined') return false;
-    return window.innerWidth < breakpoint;
-  });
+  const [isMobile, setIsMobile] = useState<boolean>(false);
 
   useEffect(() => {
     const mql = window.matchMedia(`(max-width: ${breakpoint - 1}px)`);
