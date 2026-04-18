@@ -2,6 +2,7 @@ import { useRef, useState, useEffect } from 'react';
 import { motion, useInView, AnimatePresence } from 'motion/react';
 import { HeadlineReveal } from './HeadlineReveal';
 import { useIsMobile } from '../hooks/useIsMobile';
+import { InteractiveTilt } from './InteractiveTilt';
 
 // ─── Funnel stage data ────────────────────────────────────────────────────────
 const FUNNEL_STAGES = [
@@ -96,8 +97,53 @@ function FunnelStageRow({
         width: `${stageWidth}%`,
         margin: '0 auto',
         position: 'relative',
+        paddingBottom: isMobile || isLast ? 0 : 16,
       }}
     >
+      {!isMobile && (
+        <>
+          <motion.div
+            animate={{
+              opacity: showAfter ? 0.92 : 0.72,
+            }}
+            transition={{ duration: 0.55 }}
+            style={{
+              position: 'absolute',
+              left: 18,
+              right: 14,
+              bottom: isLast ? -6 : 0,
+              height: isLast ? 26 : 22,
+              background: showAfter
+                ? 'linear-gradient(180deg, rgba(74,124,111,0.28), rgba(74,124,111,0.04))'
+                : 'linear-gradient(180deg, rgba(239,68,68,0.2), rgba(239,68,68,0.03))',
+              clipPath: 'polygon(4% 0, 100% 0, 96% 100%, 0 100%)',
+              filter: 'blur(0.2px)',
+              zIndex: 0,
+            }}
+          />
+
+          <motion.div
+            animate={{
+              opacity: showAfter ? 0.68 : 0.54,
+            }}
+            transition={{ duration: 0.55 }}
+            style={{
+              position: 'absolute',
+              top: 9,
+              bottom: isLast ? 4 : 14,
+              right: -14,
+              width: 18,
+              background: showAfter
+                ? 'linear-gradient(180deg, rgba(74,124,111,0.24), rgba(74,124,111,0.06))'
+                : 'linear-gradient(180deg, rgba(239,68,68,0.18), rgba(239,68,68,0.04))',
+              clipPath: 'polygon(0 0, 100% 14%, 100% 86%, 0 100%)',
+              borderRadius: '0 8px 8px 0',
+              zIndex: 1,
+            }}
+          />
+        </>
+      )}
+
       {/* Stage bar */}
       <motion.div
         layout={!isMobile}
@@ -114,7 +160,12 @@ function FunnelStageRow({
               : '1px solid rgba(245,242,237,0.08)',
           transition: 'border-color 0.6s ease',
           background: isMobile ? 'rgba(22, 22, 28, 0.94)' : undefined,
-          boxShadow: isMobile ? '0 10px 28px rgba(0,0,0,0.22)' : undefined,
+          boxShadow: isMobile
+            ? '0 10px 28px rgba(0,0,0,0.22)'
+            : showAfter
+              ? '0 18px 42px rgba(0,0,0,0.24), 0 0 32px rgba(74,124,111,0.08)'
+              : '0 18px 42px rgba(0,0,0,0.22), 0 0 28px rgba(239,68,68,0.05)',
+          zIndex: 2,
         }}
       >
         {/* Background */}
@@ -245,7 +296,7 @@ function FunnelStageRow({
             style={{
               position: 'absolute', inset: -1,
               borderRadius: '6px 6px 14px 14px',
-              boxShadow: '0 0 30px rgba(74,124,111,0.2), inset 0 0 20px rgba(74,124,111,0.05)',
+              boxShadow: '0 0 38px rgba(74,124,111,0.24), inset 0 0 24px rgba(74,124,111,0.06)',
               pointerEvents: 'none',
             }}
           />
@@ -402,55 +453,140 @@ export function RetentionFunnelSection() {
         </motion.div>
 
         {/* ════════════ 3D FUNNEL ════════════ */}
-        <div style={{
-          perspective: isMobile ? 'none' : 1200,
-          maxWidth: 700,
-          margin: '0 auto',
-          position: 'relative',
-          width: '100%',
-        }}>
-          {/* Floating particles */}
-          {!isMobile && inView && (
-            <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', overflow: 'hidden' }}>
-              {Array.from({ length: showAfter ? 14 : 5 }, (_, i) => (
-                <FlowParticle
-                  key={`p-${i}-${showAfter}`}
-                  delay={i * 0.4}
-                  x={180 + Math.sin(i * 1.3) * 140}
-                  duration={3 + (i % 4) * 0.35}
-                  color={showAfter ? 'rgba(74,124,111,0.6)' : 'rgba(239,68,68,0.4)'}
-                />
-              ))}
-            </div>
-          )}
+        <InteractiveTilt
+          disabled={isMobile}
+          maxTilt={5}
+          lift={10}
+          radius={24}
+          style={{
+            maxWidth: 760,
+            margin: '0 auto',
+            width: '100%',
+          }}
+        >
+          <div style={{
+            position: 'relative',
+            width: '100%',
+            padding: isMobile ? '20px 0 0' : '28px 26px 22px',
+            borderRadius: 24,
+            border: '1px solid rgba(245,242,237,0.08)',
+            background: 'linear-gradient(180deg, rgba(245,242,237,0.035), rgba(245,242,237,0.015))',
+            boxShadow: '0 40px 100px rgba(0,0,0,0.28)',
+            overflow: 'hidden',
+          }}>
+            {!isMobile && (
+              <>
+                <div style={{
+                  position: 'absolute',
+                  inset: '20px 28px auto',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  pointerEvents: 'none',
+                }}>
+                  <div style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 8,
+                    padding: '7px 11px',
+                    borderRadius: 999,
+                    background: 'rgba(8,8,8,0.3)',
+                    border: '1px solid rgba(245,242,237,0.08)',
+                    fontFamily: 'var(--font-mono)',
+                    fontSize: 9,
+                    letterSpacing: '0.08em',
+                    color: 'rgba(245,242,237,0.42)',
+                    textTransform: 'uppercase',
+                  }}>
+                    <span style={{ width: 6, height: 6, borderRadius: '50%', background: showAfter ? '#4A7C6F' : '#EF4444' }} />
+                    {showAfter ? 'After state' : 'Before state'}
+                  </div>
 
-          {/* The isometric funnel */}
-          <motion.div
-            initial={{ rotateX: 0, opacity: 0 }}
-            animate={inView ? { rotateX: isMobile ? 0 : 10, opacity: 1 } : {}}
-            transition={{ delay: 0.3, duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
-            style={{
-              transformStyle: 'preserve-3d',
-              transformOrigin: 'center top',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: isMobile ? 10 : 8,
-              paddingRight: 0,
-              opacity: isMobile ? 1 : undefined,
-            }}
-          >
-            {FUNNEL_STAGES.map((stage, i) => (
-              <FunnelStageRow
-                key={stage.label}
-                stage={stage}
-                index={i}
-                showAfter={showAfter}
-                inView={inView}
-                isMobile={isMobile}
-              />
-            ))}
-          </motion.div>
-        </div>
+                  <div style={{
+                    fontFamily: 'var(--font-mono)',
+                    fontSize: 9,
+                    letterSpacing: '0.08em',
+                    color: 'rgba(245,242,237,0.24)',
+                    textTransform: 'uppercase',
+                  }}>
+                    Visitor flow model
+                  </div>
+                </div>
+
+                <div style={{
+                  position: 'absolute',
+                  inset: '64px 40px 22px',
+                  pointerEvents: 'none',
+                }}>
+                  <div style={{
+                    position: 'absolute',
+                    inset: 0,
+                    borderRadius: 24,
+                    background: `radial-gradient(circle at 50% 10%, ${showAfter ? 'rgba(74,124,111,0.12)' : 'rgba(239,68,68,0.08)'} 0%, transparent 62%)`,
+                  }} />
+                  <div style={{
+                    position: 'absolute',
+                    left: '12%',
+                    right: '12%',
+                    top: '18%',
+                    bottom: '12%',
+                    backgroundImage: 'linear-gradient(rgba(245,242,237,0.04) 1px, transparent 1px)',
+                    backgroundSize: '100% 52px',
+                    opacity: 0.55,
+                  }} />
+                </div>
+              </>
+            )}
+
+            <div style={{
+              perspective: isMobile ? 'none' : 1400,
+              maxWidth: 700,
+              margin: isMobile ? '0 auto' : '42px auto 0',
+              position: 'relative',
+              width: '100%',
+            }}>
+              {!isMobile && inView && (
+                <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', overflow: 'hidden' }}>
+                  {Array.from({ length: showAfter ? 14 : 5 }, (_, i) => (
+                    <FlowParticle
+                      key={`p-${i}-${showAfter}`}
+                      delay={i * 0.4}
+                      x={180 + Math.sin(i * 1.3) * 140}
+                      duration={3 + (i % 4) * 0.35}
+                      color={showAfter ? 'rgba(74,124,111,0.6)' : 'rgba(239,68,68,0.4)'}
+                    />
+                  ))}
+                </div>
+              )}
+
+              <motion.div
+                initial={{ rotateX: 0, rotateY: 0, opacity: 0 }}
+                animate={inView ? { rotateX: isMobile ? 0 : 12, rotateY: isMobile ? 0 : -6, opacity: 1 } : {}}
+                transition={{ delay: 0.3, duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
+                style={{
+                  transformStyle: 'preserve-3d',
+                  transformOrigin: 'center top',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: isMobile ? 10 : 8,
+                  paddingRight: 0,
+                  opacity: isMobile ? 1 : undefined,
+                }}
+              >
+                {FUNNEL_STAGES.map((stage, i) => (
+                  <FunnelStageRow
+                    key={stage.label}
+                    stage={stage}
+                    index={i}
+                    showAfter={showAfter}
+                    inView={inView}
+                    isMobile={isMobile}
+                  />
+                ))}
+              </motion.div>
+            </div>
+          </div>
+        </InteractiveTilt>
 
         {/* ════════════ SUMMARY METRICS ════════════ */}
         <motion.div

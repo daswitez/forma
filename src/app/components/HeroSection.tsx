@@ -2,6 +2,7 @@ import { useRef, useState, useEffect } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'motion/react';
 import { AnimatedNumber } from './AnimatedNumber';
 import { useIsMobile } from '../hooks/useIsMobile';
+import { InteractiveTilt } from './InteractiveTilt';
 
 
 
@@ -637,21 +638,23 @@ export function HeroSection() {
   const opacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
 
   return (
-    <section className="hero" ref={ref} style={{ minHeight: '100vh', display: 'flex', alignItems: 'center' }}>
+    <section className="hero" ref={ref} style={{ display: 'flex', alignItems: 'center' }}>
       <div className="hero-bg-grid" aria-hidden="true" />
       <div className="hero-bg-accent" aria-hidden="true" />
+      <div className="hero-bg-beam" aria-hidden="true" />
+      <div className="hero-bg-rings" aria-hidden="true" />
 
       <motion.div style={{ y, opacity, width: '100%' }}>
         <div style={{
           maxWidth: 1280, margin: '0 auto',
           padding: isMobile ? '0 20px' : '0 64px',
           display: 'grid',
-          gridTemplateColumns: isMobile ? '1fr' : '1fr 420px',
-          gap: isMobile ? 0 : 80,
+          gridTemplateColumns: isMobile ? '1fr' : 'minmax(0, 1.08fr) minmax(380px, 0.92fr)',
+          gap: isMobile ? 32 : 70,
           alignItems: 'center', position: 'relative', zIndex: 1,
         }}>
           {/* Left: Copy */}
-          <div>
+          <div className="hero-copy-column">
             <motion.div
               className="hero-eyebrow-row"
               initial={{ opacity: 0, x: -20 }}
@@ -680,7 +683,7 @@ export function HeroSection() {
               initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-              style={{ maxWidth: 520 }}
+              style={{ maxWidth: 580 }}
             >
               We close the gap between what your business is and what your website shows.
               Strategy, design, and implementation shipped as one integrated process
@@ -736,11 +739,23 @@ export function HeroSection() {
           </div>
 
           {/* Right: Live demo browser */}
-          {!isMobile && (
-            <div style={{ position: 'relative', marginLeft: 'auto' }}>
-              <FloatingBrowserMockup />
-            </div>
-          )}
+          <div className="hero-stage">
+            {!isMobile && (
+              <InteractiveTilt
+                className="hero-browser-tilt"
+                disabled={isMobile}
+                maxTilt={9}
+                lift={12}
+                scale={1.01}
+                radius={14}
+              >
+                <div className="hero-browser-shell">
+                  <FloatingBrowserMockup />
+                </div>
+              </InteractiveTilt>
+            )}
+
+          </div>
         </div>
       </motion.div>
 

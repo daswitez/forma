@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import { motion, useInView } from 'motion/react';
 import { HeadlineReveal } from './HeadlineReveal';
 import { useIsMobile } from '../hooks/useIsMobile';
+import { InteractiveTilt } from './InteractiveTilt';
 
 // ─── Anonymized client testimonials ──────────────────────────────────────────
 // Names withheld by request · Results independently verified
@@ -23,79 +24,147 @@ const testimonials = [
 ];
 
 // ─── Floating visual anchor — a live mini-metrics card ───────────────────────
-function FloatingMetricsAnchor() {
+function FloatingMetricsAnchor({ isMobile }: { isMobile: boolean }) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20, scale: 0.96 }}
-      whileInView={{ opacity: 1, y: 0, scale: 1 }}
-      viewport={{ once: true }}
-      transition={{ delay: 0.5, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-      style={{
-        background: 'rgba(10,10,10,0.9)',
-        backdropFilter: 'blur(16px)',
-        border: '1px solid rgba(255,255,255,0.08)',
-        borderRadius: 10,
-        padding: '20px 24px',
-        maxWidth: 360,
-        margin: '0 auto 48px',
-        boxShadow: '0 32px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.05)',
-      }}
+    <InteractiveTilt
+      disabled={isMobile}
+      maxTilt={7}
+      lift={10}
+      className="cta-metrics-tilt"
+      radius={10}
     >
-      {/* Header */}
-      <div style={{
-        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-        marginBottom: 14, paddingBottom: 12,
-        borderBottom: '1px solid rgba(255,255,255,0.07)',
-      }}>
-        <span style={{
-          fontFamily: 'var(--font-mono)', fontSize: 9,
-          color: 'rgba(245,242,237,0.3)', letterSpacing: '0.1em',
-          textTransform: 'uppercase',
-        }}>Average client outcomes</span>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-          <motion.div
-            animate={{ opacity: [1, 0.3, 1] }}
-            transition={{ repeat: Infinity, duration: 2.2, ease: 'easeInOut' }}
-            style={{ width: 5, height: 5, borderRadius: '50%', background: '#28C840' }}
-          />
+      <motion.div
+        initial={{ opacity: 0, y: 20, scale: 0.96 }}
+        whileInView={{ opacity: 1, y: 0, scale: 1 }}
+        viewport={{ once: true }}
+        transition={{ delay: 0.5, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+        style={{
+          background: 'rgba(10,10,10,0.9)',
+          backdropFilter: 'blur(16px)',
+          border: '1px solid rgba(255,255,255,0.08)',
+          borderRadius: 10,
+          padding: '20px 24px',
+          maxWidth: 360,
+          margin: '0 auto 48px',
+          boxShadow: '0 32px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.05)',
+        }}
+      >
+        <div style={{
+          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+          marginBottom: 14, paddingBottom: 12,
+          borderBottom: '1px solid rgba(255,255,255,0.07)',
+        }}>
           <span style={{
             fontFamily: 'var(--font-mono)', fontSize: 9,
-            color: '#28C840', fontWeight: 600, letterSpacing: '0.06em',
-          }}>VERIFIED</span>
+            color: 'rgba(245,242,237,0.3)', letterSpacing: '0.1em',
+            textTransform: 'uppercase',
+          }}>Average client outcomes</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+            <motion.div
+              animate={{ opacity: [1, 0.3, 1] }}
+              transition={{ repeat: Infinity, duration: 2.2, ease: 'easeInOut' }}
+              style={{ width: 5, height: 5, borderRadius: '50%', background: '#28C840' }}
+            />
+            <span style={{
+              fontFamily: 'var(--font-mono)', fontSize: 9,
+              color: '#28C840', fontWeight: 600, letterSpacing: '0.06em',
+            }}>VERIFIED</span>
+          </div>
         </div>
-      </div>
 
-      {/* Metrics grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px 20px' }}>
-        {[
-          { label: 'Conversion rate', value: '+300%', delta: 'typical lift' },
-          { label: 'Revenue / visitor', value: '+4.1×', delta: 'same traffic' },
-          { label: 'Qualified leads', value: '+67%', delta: '90 days post-launch' },
-          { label: 'Time to close', value: '−28%', delta: 'sales cycle' },
-        ].map((m, i) => (
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px 20px' }}>
+          {[
+            { label: 'Conversion rate', value: '+300%', delta: 'typical lift' },
+            { label: 'Revenue / visitor', value: '+4.1×', delta: 'same traffic' },
+            { label: 'Qualified leads', value: '+67%', delta: '90 days post-launch' },
+            { label: 'Time to close', value: '−28%', delta: 'sales cycle' },
+          ].map((m, i) => (
+            <motion.div
+              key={m.label}
+              initial={{ opacity: 0, y: 6 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.7 + i * 0.08 }}
+            >
+              <div style={{
+                fontFamily: 'var(--font-mono)', fontSize: 18, fontWeight: 700,
+                color: 'var(--color-sage)', lineHeight: 1, marginBottom: 3,
+              }}>{m.value}</div>
+              <div style={{
+                fontFamily: 'var(--font-headline)', fontSize: 11, fontWeight: 500,
+                color: 'rgba(245,242,237,0.6)', marginBottom: 1,
+              }}>{m.label}</div>
+              <div style={{
+                fontFamily: 'var(--font-mono)', fontSize: 9,
+                color: 'rgba(245,242,237,0.25)', letterSpacing: '0.03em',
+              }}>{m.delta}</div>
+            </motion.div>
+          ))}
+        </div>
+      </motion.div>
+    </InteractiveTilt>
+  );
+}
+
+function ResponseConfidenceStrip({ inView, isMobile }: { inView: boolean; isMobile: boolean }) {
+  const steps = [
+    'You send the context',
+    'We reply with a sharp read',
+    'If there is fit, we map the build',
+  ];
+
+  return (
+    <div
+      style={{
+        display: 'grid',
+        gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, minmax(0, 1fr))',
+        gap: 12,
+        marginBottom: 36,
+      }}
+    >
+      {steps.map((step, index) => (
+        <InteractiveTilt
+          key={step}
+          disabled={isMobile}
+          maxTilt={6}
+          lift={8}
+          scale={1.008}
+          radius={8}
+        >
           <motion.div
-            key={m.label}
-            initial={{ opacity: 0, y: 6 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.7 + i * 0.08 }}
+            initial={{ opacity: 0, y: 16 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ delay: 0.56 + index * 0.08, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+            style={{
+              background: 'rgba(245,242,237,0.04)',
+              border: '1px solid rgba(245,242,237,0.08)',
+              borderRadius: 8,
+              padding: '16px 18px',
+              textAlign: 'left',
+              minHeight: 96,
+            }}
           >
             <div style={{
-              fontFamily: 'var(--font-mono)', fontSize: 18, fontWeight: 700,
-              color: 'var(--color-sage)', lineHeight: 1, marginBottom: 3,
-            }}>{m.value}</div>
+              fontFamily: 'var(--font-mono)',
+              fontSize: 10,
+              color: 'var(--color-sand)',
+              letterSpacing: '0.08em',
+              marginBottom: 10,
+            }}>
+              0{index + 1}
+            </div>
             <div style={{
-              fontFamily: 'var(--font-headline)', fontSize: 11, fontWeight: 500,
-              color: 'rgba(245,242,237,0.6)', marginBottom: 1,
-            }}>{m.label}</div>
-            <div style={{
-              fontFamily: 'var(--font-mono)', fontSize: 9,
-              color: 'rgba(245,242,237,0.25)', letterSpacing: '0.03em',
-            }}>{m.delta}</div>
+              fontFamily: 'var(--font-headline)',
+              fontSize: 14,
+              lineHeight: 1.45,
+              color: 'rgba(245,242,237,0.84)',
+            }}>
+              {step}
+            </div>
           </motion.div>
-        ))}
-      </div>
-    </motion.div>
+        </InteractiveTilt>
+      ))}
+    </div>
   );
 }
 
@@ -157,7 +226,7 @@ export function CTASection() {
           </p>
 
           {/* Metrics anchor */}
-          <FloatingMetricsAnchor />
+          <FloatingMetricsAnchor isMobile={isMobile} />
 
           {/* Testimonials */}
           <div style={{
@@ -165,60 +234,68 @@ export function CTASection() {
             marginBottom: 48, textAlign: 'left',
           }}>
             {testimonials.map((t, i) => (
-              <motion.div
+              <InteractiveTilt
                 key={t.role + i}
-                initial={{ opacity: 0, y: 16 }}
-                animate={inView ? { opacity: 1, y: 0 } : {}}
-                transition={{ delay: 0.4 + i * 0.12, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                style={{
-                  background: 'rgba(245,242,237,0.04)',
-                  border: '1px solid rgba(245,242,237,0.08)',
-                  borderRadius: 8, padding: '20px 22px',
-                  position: 'relative',
-                }}
+                disabled={isMobile}
+                maxTilt={7}
+                lift={9}
+                radius={8}
               >
-                {/* Quote mark */}
-                <div style={{
-                  fontFamily: 'var(--font-display)', fontSize: 40,
-                  color: `${t.color}30`, lineHeight: 0.8,
-                  marginBottom: 10, display: 'block',
-                }}>"</div>
-
-                <p style={{
-                  fontFamily: 'var(--font-body)', fontSize: 13.5, lineHeight: 1.65,
-                  color: 'rgba(245,242,237,0.65)', marginBottom: 16,
-                  fontStyle: 'italic',
-                }}>
-                  {t.quote}
-                </p>
-
-                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+                <motion.div
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={inView ? { opacity: 1, y: 0 } : {}}
+                  transition={{ delay: 0.4 + i * 0.12, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                  style={{
+                    background: 'rgba(245,242,237,0.04)',
+                    border: '1px solid rgba(245,242,237,0.08)',
+                    borderRadius: 8, padding: '20px 22px',
+                    position: 'relative',
+                  }}
+                >
                   <div style={{
-                    width: 32, height: 32, borderRadius: '50%', background: t.color,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: 10, color: 'white', fontWeight: 700,
-                    fontFamily: 'var(--font-headline)', flexShrink: 0,
+                    fontFamily: 'var(--font-display)', fontSize: 40,
+                    color: `${t.color}30`, lineHeight: 0.8,
+                    marginBottom: 10, display: 'block',
+                  }}>"</div>
+
+                  <p style={{
+                    fontFamily: 'var(--font-body)', fontSize: 13.5, lineHeight: 1.65,
+                    color: 'rgba(245,242,237,0.65)', marginBottom: 16,
+                    fontStyle: 'italic',
                   }}>
-                    {t.role.slice(0, 2).toUpperCase()}
+                    {t.quote}
+                  </p>
+
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+                    <div style={{
+                      width: 32, height: 32, borderRadius: '50%', background: t.color,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      fontSize: 10, color: 'white', fontWeight: 700,
+                      fontFamily: 'var(--font-headline)', flexShrink: 0,
+                    }}>
+                      {t.role.slice(0, 2).toUpperCase()}
+                    </div>
+                    <div>
+                      <div style={{
+                        fontFamily: 'var(--font-headline)', fontSize: 12,
+                        fontWeight: 600, color: 'var(--color-warm-white)', lineHeight: 1.3,
+                      }}>{t.role} · {t.industry}</div>
+                      <div style={{
+                        fontFamily: 'var(--font-mono)', fontSize: 9.5,
+                        color: `${t.color}90`, letterSpacing: '0.04em', marginTop: 2,
+                      }}>{t.result}</div>
+                      <div style={{
+                        fontFamily: 'var(--font-mono)', fontSize: 8.5,
+                        color: 'rgba(245,242,237,0.2)', marginTop: 3,
+                      }}>Name withheld by request</div>
+                    </div>
                   </div>
-                  <div>
-                    <div style={{
-                      fontFamily: 'var(--font-headline)', fontSize: 12,
-                      fontWeight: 600, color: 'var(--color-warm-white)', lineHeight: 1.3,
-                    }}>{t.role} · {t.industry}</div>
-                    <div style={{
-                      fontFamily: 'var(--font-mono)', fontSize: 9.5,
-                      color: `${t.color}90`, letterSpacing: '0.04em', marginTop: 2,
-                    }}>{t.result}</div>
-                    <div style={{
-                      fontFamily: 'var(--font-mono)', fontSize: 8.5,
-                      color: 'rgba(245,242,237,0.2)', marginTop: 3,
-                    }}>Name withheld by request</div>
-                  </div>
-                </div>
-              </motion.div>
+                </motion.div>
+              </InteractiveTilt>
             ))}
           </div>
+
+          <ResponseConfidenceStrip inView={inView} isMobile={isMobile} />
 
           {/* CTA */}
           <div style={{ textAlign: 'center' }}>
