@@ -241,7 +241,7 @@ function StepVisual({ step, isActive }: { step: number; isActive: boolean }) {
         transition={{ delay: 1.0, type: 'spring' }}
         style={{
           position: 'absolute', top: 12, right: 12,
-          background: 'rgba(40,200,64,0.08)', border: '1px solid rgba(40,200,64,0.2)',
+          background: 'rgba(74,124,111,0.1)', border: '1px solid rgba(74,124,111,0.22)',
           borderRadius: 4, padding: '4px 10px',
           display: 'flex', alignItems: 'center', gap: 5,
         }}
@@ -249,10 +249,10 @@ function StepVisual({ step, isActive }: { step: number; isActive: boolean }) {
         <motion.div
           animate={{ opacity: [1, 0.3, 1] }}
           transition={{ repeat: Infinity, duration: 2 }}
-          style={{ width: 5, height: 5, borderRadius: '50%', background: '#28C840' }}
+          style={{ width: 5, height: 5, borderRadius: '50%', background: '#4A7C6F' }}
         />
-        <span style={{ fontSize: 8, color: '#28C840', fontWeight: 600, fontFamily: 'JetBrains Mono, monospace', letterSpacing: '0.06em' }}>
-          LIVE
+        <span style={{ fontSize: 8, color: '#4A7C6F', fontWeight: 600, fontFamily: 'JetBrains Mono, monospace', letterSpacing: '0.06em' }}>
+          // DEPLOYED
         </span>
       </motion.div>
     </div>

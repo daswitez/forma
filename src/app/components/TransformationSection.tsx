@@ -511,13 +511,13 @@ function ModalBrowserChrome({ onClose, compact = false }: { onClose: () => void;
             style={{
               marginLeft: 'auto',
               display: 'flex', alignItems: 'center', gap: 5,
-              background: 'rgba(40,200,64,0.1)', border: '1px solid rgba(40,200,64,0.22)',
+              background: 'rgba(74,124,111,0.1)', border: '1px solid rgba(74,124,111,0.22)',
               borderRadius: 4, padding: compact ? '2px 6px' : '2px 7px',
               flexShrink: 0,
             }}
           >
-            <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#28C840' }} />
-            <span style={{ fontSize: compact ? 9 : 10, fontFamily: 'JetBrains Mono, monospace', color: '#28C840', fontWeight: 600, letterSpacing: '0.06em' }}>LIVE</span>
+            <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#4A7C6F' }} />
+            <span style={{ fontSize: compact ? 9 : 10, fontFamily: 'JetBrains Mono, monospace', color: '#4A7C6F', fontWeight: 600, letterSpacing: '0.06em' }}>// ACTIVE</span>
           </motion.div>
         </div>
 
@@ -2705,9 +2705,9 @@ function PhaseAfter({ onOpenModal, compact = false }: { onOpenModal: () => void;
             <motion.div
               animate={{ opacity: [1, 0.3, 1] }}
               transition={{ repeat: Infinity, duration: 2, ease: 'easeInOut' }}
-              style={{ width: 5, height: 5, borderRadius: '50%', background: '#28C840' }}
+              style={{ width: 5, height: 5, borderRadius: '50%', background: '#4A7C6F' }}
             />
-            <span style={{ fontSize: 7, color: '#28C840', fontFamily: 'JetBrains Mono, monospace', fontWeight: 600, letterSpacing: '0.06em' }}>LIVE</span>
+            <span style={{ fontSize: 7, color: '#4A7C6F', fontFamily: 'JetBrains Mono, monospace', fontWeight: 600, letterSpacing: '0.06em' }}>// ACTIVE</span>
           </div>
         </div>
         {metrics.map((m, i) => (
@@ -2722,7 +2722,7 @@ function PhaseAfter({ onOpenModal, compact = false }: { onOpenModal: () => void;
             <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
               <span style={{ fontSize: compact ? 5.8 : 7, color: 'rgba(245,242,237,0.16)', textDecoration: 'line-through', fontFamily: 'JetBrains Mono, monospace' }}>{m.before}</span>
               <span style={{ fontSize: compact ? 7.2 : 8.5, color: '#4A7C6F', fontWeight: 700, fontFamily: 'JetBrains Mono, monospace' }}>{m.after}</span>
-              <span style={{ fontSize: compact ? 5.8 : 6.5, color: '#28C840', background: 'rgba(40,200,64,0.1)', padding: '1px 3.5px', borderRadius: 2, fontFamily: 'JetBrains Mono, monospace', fontWeight: 600 }}>{m.delta}</span>
+              <span style={{ fontSize: compact ? 5.8 : 6.5, color: 'var(--color-sage)', background: 'rgba(74,124,111,0.15)', padding: '1px 3.5px', borderRadius: 2, fontFamily: 'JetBrains Mono, monospace', fontWeight: 600 }}>{m.delta}</span>
             </div>
           </motion.div>
         ))}

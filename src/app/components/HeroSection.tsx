@@ -28,8 +28,8 @@ const PHASE_LABELS: Record<DemoPhase, string> = {
 function HeroBrowserChrome({ phase }: { phase: DemoPhase }) {
   const isAfter = phase === 'after';
   const urlMap: Record<DemoPhase, string> = {
-    before: 'www.acmecorp.com',
-    audit: 'www.acmecorp.com',
+    before: 'www.aegisindustrial.com',
+    audit: 'www.aegisindustrial.com',
     after: 'www.vectraindustrial.com',
   };
 
@@ -57,7 +57,7 @@ function HeroBrowserChrome({ phase }: { phase: DemoPhase }) {
               transition={{ duration: 0.2 }}
               style={{
                 width: 7, height: 7, borderRadius: '50%', flexShrink: 0,
-                background: isAfter ? '#28C840' : 'rgba(255,255,255,0.2)',
+                background: isAfter ? '#4A7C6F' : 'rgba(255,255,255,0.2)',
               }}
             />
           </AnimatePresence>
@@ -159,7 +159,7 @@ function BeforeSite() {
         padding: '0 14px', height: 30,
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
       }}>
-        <div style={{ fontSize: 10, fontWeight: 900, color: '#222', letterSpacing: '0.1em' }}>ACME CORP</div>
+        <div style={{ fontSize: 10, fontWeight: 900, color: '#222', letterSpacing: '0.1em' }}>AEGIS INDUSTRIAL</div>
         <div style={{ display: 'flex', gap: 10, fontSize: 7.5, color: '#999' }}>
           {['Home', 'About', 'Services', 'Products', 'Team', 'Blog', 'Contact'].map(l => <span key={l}>{l}</span>)}
         </div>
@@ -439,12 +439,12 @@ function ResultsCard() {
           <motion.div
             animate={{ opacity: [1, 0.3, 1] }}
             transition={{ repeat: Infinity, duration: 2, ease: 'easeInOut' }}
-            style={{ width: 5, height: 5, borderRadius: '50%', background: '#28C840' }}
+            style={{ width: 5, height: 5, borderRadius: '50%', background: '#4A7C6F' }}
           />
           <span style={{
-            fontSize: 7.5, color: '#28C840',
+            fontSize: 7.5, color: '#4A7C6F',
             fontFamily: 'JetBrains Mono, monospace', fontWeight: 600, letterSpacing: '0.06em',
-          }}>LIVE</span>
+          }}>STATUS: DEPLOYED</span>
         </div>
       </div>
       {[
@@ -468,8 +468,8 @@ function ResultsCard() {
             <span style={{ fontSize: 7, color: 'rgba(245,242,237,0.18)', textDecoration: 'line-through', fontFamily: 'JetBrains Mono, monospace' }}>{m.before}</span>
             <span style={{ fontSize: 8.5, color: '#4A7C6F', fontWeight: 700, fontFamily: 'JetBrains Mono, monospace' }}>{m.after}</span>
             <span style={{
-              fontSize: 6.5, color: '#28C840',
-              background: 'rgba(40,200,64,0.1)', padding: '1px 4px', borderRadius: 2,
+              fontSize: 6.5, color: 'var(--color-sage)',
+              background: 'rgba(74,124,111,0.15)', padding: '1px 4px', borderRadius: 2,
               fontFamily: 'JetBrains Mono, monospace', fontWeight: 600,
             }}>{m.delta}</span>
           </div>
