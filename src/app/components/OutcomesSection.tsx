@@ -49,12 +49,8 @@ function ClarityVisual({ inView }: { inView: boolean }) {
               <div key={i} style={{ height: 16, background: 'rgba(255,255,255,0.03)', border: '1px dashed rgba(255,255,255,0.06)', borderRadius: 2 }} />
             ))}
           </div>
-          <div style={{
-            marginTop: 6, textAlign: 'center',
-            background: 'rgba(239,68,68,0.12)', border: '1px solid rgba(239,68,68,0.25)',
-            borderRadius: 3, padding: '2px 0',
-          }}>
-            <span style={{ fontSize: 7.5, fontFamily: 'var(--font-mono)', color: '#EF4444', letterSpacing: '0.04em', fontWeight: 600 }}>✗ NO SIGNAL</span>
+          <div style={{ marginTop: 6 }}>
+            <span style={{ fontSize: 9, fontFamily: 'var(--font-headline)', color: '#EF4444', letterSpacing: '0.04em', fontWeight: 600 }}>// NO SIGNAL</span>
           </div>
         </div>
 
@@ -88,12 +84,8 @@ function ClarityVisual({ inView }: { inView: boolean }) {
               <div key={i} style={{ height: 16, background: 'rgba(74,124,111,0.08)', borderRadius: 2 }} />
             ))}
           </div>
-          <div style={{
-            marginTop: 6, textAlign: 'center',
-            background: 'rgba(74,124,111,0.14)', border: '1px solid rgba(74,124,111,0.35)',
-            borderRadius: 3, padding: '2px 0',
-          }}>
-            <span style={{ fontSize: 7.5, fontFamily: 'var(--font-mono)', color: '#4A7C6F', letterSpacing: '0.04em', fontWeight: 600 }}>✓ IMPRESSION FORMED</span>
+          <div style={{ marginTop: 6 }}>
+            <span style={{ fontSize: 9, fontFamily: 'var(--font-headline)', color: '#4A7C6F', letterSpacing: '0.04em', fontWeight: 600 }}>// IMPRESSION FORMED</span>
           </div>
         </div>
       </div>

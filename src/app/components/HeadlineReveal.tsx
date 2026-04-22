@@ -16,7 +16,7 @@ function RevealWord({ word, delay, active }: { word: string; delay: number; acti
         style={{ display: 'block' }}
         initial={{ y: '108%' }}
         animate={active ? { y: 0 } : {}}
-        transition={{ duration: 0.72, delay, ease: [0.16, 1, 0.3, 1] }}
+        transition={{ duration: 0.45, delay, ease: [0.22, 1, 0.36, 1] }}
       >
         {word}
       </motion.span>
@@ -101,7 +101,7 @@ export function HeadlineReveal({
               style={{ display: 'block' }}
               initial={{ y: '108%' }}
               animate={active ? { y: 0 } : {}}
-              transition={{ duration: 0.75, delay, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: 0.45, delay, ease: [0.22, 1, 0.36, 1] }}
             >
               {line}
             </motion.span>

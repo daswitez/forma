@@ -74,54 +74,24 @@ const platforms = [
     ],
     visual: (
       <div style={{
-        background: '#F0F0F0', borderRadius: 6, overflow: 'hidden', height: 180,
-        fontFamily: 'DM Sans, sans-serif',
+        background: '#0E0E0E', borderRadius: 6, padding: '24px 20px', height: 180,
+        display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 14,
+        fontFamily: 'JetBrains Mono, monospace', overflow: 'hidden',
       }}>
-        {/* WP admin bar */}
-        <div style={{
-          background: '#23282D', padding: '5px 12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-        }}>
-          <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-            <div style={{ width: 14, height: 14, borderRadius: '50%', background: 'rgba(255,255,255,0.15)' }} />
-            <span style={{ fontSize: 8, color: 'rgba(255,255,255,0.6)' }}>Dashboard</span>
-            <span style={{ fontSize: 8, color: 'rgba(255,255,255,0.4)' }}>Pages</span>
-            <span style={{ fontSize: 8, color: 'rgba(255,255,255,0.4)' }}>Posts</span>
-          </div>
-          <span style={{ fontSize: 8, color: 'rgba(255,255,255,0.4)' }}>Howdy, Admin</span>
+        <div style={{ fontSize: 9, color: '#21759B', letterSpacing: '0.1em' }}>
+          // ARCHITECTURE: WORDPRESS
         </div>
-        {/* Editor area */}
-        <div style={{ padding: 10, display: 'flex', gap: 8, height: 'calc(100% - 28px)' }}>
-          {/* Sidebar */}
-          <div style={{ width: 50, background: '#fff', borderRadius: 3, padding: '6px 4px', display: 'flex', flexDirection: 'column', gap: 4 }}>
-            {['Pages', 'Posts', 'Media', 'Forms'].map(item => (
-              <div key={item} style={{
-                fontSize: 7, padding: '3px 4px', borderRadius: 2,
-                background: item === 'Pages' ? 'rgba(33,117,155,0.08)' : 'transparent',
-                fontWeight: item === 'Pages' ? 600 : 400,
-                color: item === 'Pages' ? '#21759B' : '#666',
-              }}>
-                {item}
-              </div>
-            ))}
+        <div style={{ fontSize: 13, color: 'rgba(245,242,237,0.9)', fontFamily: 'var(--font-headline)' }}>
+          Headless / Decoupled CMS
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+          <div style={{ borderLeft: '2px solid rgba(33,117,155,0.4)', paddingLeft: 10 }}>
+            <div style={{ fontSize: 7, color: 'rgba(245,242,237,0.4)', marginBottom: 4, letterSpacing: '0.06em' }}>DATA LAYER</div>
+            <div style={{ fontSize: 9, color: 'rgba(245,242,237,0.7)' }}>ACF PRO + Block Editor</div>
           </div>
-          {/* Content area */}
-          <div style={{ flex: 1, background: '#fff', borderRadius: 3, padding: 8 }}>
-            <div style={{ fontSize: 7, color: '#999', letterSpacing: '0.05em', marginBottom: 4 }}>EDITING: HOMEPAGE</div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-              <div style={{ height: 24, borderRadius: 2, background: '#E8F4FD', border: '1px dashed #21759B', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <span style={{ fontSize: 7, color: '#21759B' }}>Hero Block</span>
-              </div>
-              <div style={{ height: 16, borderRadius: 2, background: '#F5F5F5', border: '1px dashed #DDD' }} />
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 3 }}>
-                <div style={{ height: 14, borderRadius: 2, background: '#F5F5F5', border: '1px dashed #DDD' }} />
-                <div style={{ height: 14, borderRadius: 2, background: '#F5F5F5', border: '1px dashed #DDD' }} />
-              </div>
-              <div style={{
-                height: 18, borderRadius: 2, background: '#21759B', display: 'flex', alignItems: 'center', justifyContent: 'center',
-              }}>
-                <span style={{ fontSize: 6.5, color: 'white', fontWeight: 600 }}>UPDATE</span>
-              </div>
-            </div>
+          <div style={{ borderLeft: '2px solid rgba(33,117,155,0.4)', paddingLeft: 10 }}>
+            <div style={{ fontSize: 7, color: 'rgba(245,242,237,0.4)', marginBottom: 4, letterSpacing: '0.06em' }}>API ROUTES</div>
+            <div style={{ fontSize: 9, color: 'rgba(245,242,237,0.7)' }}>Next.js Static Export</div>
           </div>
         </div>
       </div>
@@ -140,70 +110,24 @@ const platforms = [
     ],
     visual: (
       <div style={{
-        background: '#1E1E1E', borderRadius: 6, overflow: 'hidden', height: 180,
-        fontFamily: 'DM Sans, sans-serif',
+        background: '#0E0E0E', borderRadius: 6, padding: '24px 20px', height: 180,
+        display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 14,
+        fontFamily: 'JetBrains Mono, monospace', overflow: 'hidden',
       }}>
-        {/* Webflow toolbar */}
-        <div style={{
-          background: '#2C2C2C', padding: '5px 10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-          borderBottom: '1px solid rgba(255,255,255,0.06)',
-        }}>
-          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-            <div style={{ width: 16, height: 16, borderRadius: 3, background: '#4353FF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <span style={{ color: 'white', fontSize: 8, fontWeight: 700 }}>W</span>
-            </div>
-            <span style={{ fontSize: 8, color: 'rgba(255,255,255,0.5)' }}>Designer</span>
-          </div>
-          <div style={{ display: 'flex', gap: 6 }}>
-            {['960', '768', '480'].map(bp => (
-              <div key={bp} style={{
-                fontSize: 7, color: 'rgba(255,255,255,0.3)', background: 'rgba(255,255,255,0.05)',
-                padding: '2px 5px', borderRadius: 2,
-              }}>{bp}</div>
-            ))}
-          </div>
-          <div style={{
-            background: '#4353FF', color: 'white', fontSize: 7, padding: '3px 8px',
-            borderRadius: 3, fontWeight: 600,
-          }}>Publish</div>
+        <div style={{ fontSize: 9, color: '#4353FF', letterSpacing: '0.1em' }}>
+          // PLATFORM: WEBFLOW
         </div>
-        {/* Canvas */}
-        <div style={{ padding: 8, display: 'flex', gap: 6 }}>
-          {/* Layers panel */}
-          <div style={{ width: 55, padding: '4px' }}>
-            <div style={{ fontSize: 7, color: 'rgba(255,255,255,0.3)', marginBottom: 4 }}>Layers</div>
-            {['Section', '  Container', '    Heading', '    Grid', '      Card 1', '      Card 2'].map((l, i) => (
-              <div key={i} style={{
-                fontSize: 6.5, color: i === 2 ? '#4353FF' : 'rgba(255,255,255,0.35)',
-                padding: '2px 0', fontFamily: 'JetBrains Mono, monospace',
-                background: i === 2 ? 'rgba(67,83,255,0.1)' : 'transparent',
-                borderRadius: 2,
-              }}>{l}</div>
-            ))}
+        <div style={{ fontSize: 13, color: 'rgba(245,242,237,0.9)', fontFamily: 'var(--font-headline)' }}>
+          Visual Native Engine
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+          <div style={{ borderLeft: '2px solid rgba(67,83,255,0.4)', paddingLeft: 10 }}>
+            <div style={{ fontSize: 7, color: 'rgba(245,242,237,0.4)', marginBottom: 4, letterSpacing: '0.06em' }}>DOM / STYLES</div>
+            <div style={{ fontSize: 9, color: 'rgba(245,242,237,0.7)' }}>Semantic HTML5 + CSS</div>
           </div>
-          {/* Visual canvas */}
-          <div style={{ flex: 1, background: '#FAFAFA', borderRadius: 3, padding: 6 }}>
-            <div style={{ height: 28, borderRadius: 2, background: 'linear-gradient(135deg, #4353FF22, #4353FF08)', border: '2px solid #4353FF', marginBottom: 4, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <span style={{ fontSize: 8, color: '#333', fontWeight: 600 }}>Hero Section</span>
-            </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 3 }}>
-              {[1, 2].map(n => (
-                <div key={n} style={{ height: 32, background: '#F0F0F0', borderRadius: 2, border: '1px dashed #DDD' }} />
-              ))}
-            </div>
-          </div>
-          {/* Style panel */}
-          <div style={{ width: 55, padding: '4px' }}>
-            <div style={{ fontSize: 7, color: 'rgba(255,255,255,0.3)', marginBottom: 4 }}>Styles</div>
-            {['Font', 'Color', 'Spacing', 'Layout'].map(s => (
-              <div key={s} style={{
-                fontSize: 6.5, color: 'rgba(255,255,255,0.3)', padding: '2px 0',
-                display: 'flex', justifyContent: 'space-between',
-              }}>
-                <span>{s}</span>
-                <div style={{ width: 16, height: 6, borderRadius: 2, background: 'rgba(255,255,255,0.08)' }} />
-              </div>
-            ))}
+          <div style={{ borderLeft: '2px solid rgba(67,83,255,0.4)', paddingLeft: 10 }}>
+            <div style={{ fontSize: 7, color: 'rgba(245,242,237,0.4)', marginBottom: 4, letterSpacing: '0.06em' }}>HOSTING</div>
+            <div style={{ fontSize: 9, color: 'rgba(245,242,237,0.7)' }}>AWS / Fastly CDN</div>
           </div>
         </div>
       </div>
