@@ -282,15 +282,19 @@ export function PlatformSection() {
                   {platform.forWho}
                 </p>
 
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                   {platform.capabilities.map(cap => (
-                    <span key={cap} style={{
-                      fontFamily: 'var(--font-headline)', fontSize: 11, fontWeight: 500,
-                      color: 'rgba(14,14,14,0.55)', background: 'rgba(14,14,14,0.04)',
-                      padding: '3px 8px', borderRadius: 3,
-                    }}>
-                      {cap}
-                    </span>
+                    <div key={cap} style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0, marginTop: 2 }}>
+                        <path d="M20 6L9 17L4 12" stroke={platform.accent} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                      <span style={{
+                        fontFamily: 'var(--font-headline)', fontSize: 13, fontWeight: 500,
+                        color: 'rgba(14,14,14,0.7)',
+                      }}>
+                        {cap}
+                      </span>
+                    </div>
                   ))}
                 </div>
               </div>

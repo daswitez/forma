@@ -19,7 +19,7 @@ const PHASE_DURATION = 5800;
 const phases: Phase[] = [
   {
     id: 'before',
-    number: '—',
+    number: '00',
     label: 'Current State',
     sublabel: 'Before the work begins',
     headline: 'Traffic arriving. Revenue not following.',

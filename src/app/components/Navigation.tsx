@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { motion, useScroll, useTransform } from 'motion/react';
+import { motion, useScroll, useTransform, AnimatePresence } from 'motion/react';
 
 const NAV_SECTIONS = [
   { id: 'transformation', label: 'Our Process' },
@@ -146,25 +146,27 @@ export function Navigation() {
           </button>
         </div>
 
-        {menuOpen && (
-          <motion.div
-            className="nav-mobile-menu"
-            initial={{ opacity: 0, y: -8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.2 }}
-          >
-            {NAV_SECTIONS.map(({ id, label }) => (
-              <button
-                key={id}
-                className="nav-mobile-link"
-                onClick={() => scrollTo(id)}
-              >
-                {label}
-              </button>
-            ))}
-          </motion.div>
-        )}
+        <AnimatePresence>
+          {menuOpen && (
+            <motion.div
+              className="nav-mobile-menu"
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.2 }}
+            >
+              {NAV_SECTIONS.map(({ id, label }) => (
+                <button
+                  key={id}
+                  className="nav-mobile-link"
+                  onClick={() => scrollTo(id)}
+                >
+                  {label}
+                </button>
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </nav>
     </>
   );

@@ -165,7 +165,7 @@ function StepVisual({ step, isActive }: { step: number; isActive: boolean }) {
                 background: 'linear-gradient(135deg, #4A7C6F, #3A6358)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}>
-                <span style={{ fontSize: 6.5, color: '#F5F2ED', letterSpacing: '0.08em', fontWeight: 600 }}>START THE CONVERSATION</span>
+                <span style={{ fontSize: 6.5, color: '#F5F2ED', letterSpacing: '0.04em', fontWeight: 600 }}>Start the conversation</span>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 3 }}>
                 {[1, 2, 3].map(n => (

@@ -79,7 +79,7 @@ function FAQAccordionItem({
         <div style={{ display: 'flex', gap: 20, alignItems: 'flex-start', flex: 1 }}>
           <span style={{
             fontFamily: 'var(--font-mono)', fontSize: 11,
-            color: isOpen ? 'var(--color-sage)' : 'rgba(14,14,14,0.28)',
+            color: isOpen ? 'var(--color-sage)' : 'rgba(14,14,14,0.5)',
             letterSpacing: '0.06em', flexShrink: 0, paddingTop: 3,
             transition: 'color 250ms ease',
           }}>

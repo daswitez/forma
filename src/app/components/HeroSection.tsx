@@ -75,7 +75,7 @@ function HeroBrowserChrome({ phase }: { phase: DemoPhase }) {
                 whiteSpace: 'nowrap',
               }}
             >
-              {isAfter ? 'Vectra Industrial' : 'Acme Corp'}
+              {isAfter ? 'Vectra Industrial' : 'Aegis Industrial Systems'}
             </motion.span>
           </AnimatePresence>
           <span style={{ fontSize: 8, color: 'rgba(245,242,237,0.22)', marginLeft: 4 }}>×</span>
@@ -170,7 +170,7 @@ function BeforeSite() {
         height: 104, display: 'flex', flexDirection: 'column',
         alignItems: 'center', justifyContent: 'center', gap: 5,
       }}>
-        <div style={{ fontSize: 16, fontWeight: 900, color: 'white' }}>Welcome to Acme Corp</div>
+        <div style={{ fontSize: 16, fontWeight: 900, color: 'white' }}>Welcome to Aegis Industrial</div>
         <div style={{ fontSize: 8.5, color: 'rgba(255,255,255,0.55)', maxWidth: 220, textAlign: 'center', lineHeight: 1.4 }}>
           We provide innovative solutions for businesses worldwide.
         </div>
@@ -721,7 +721,7 @@ export function HeroSection() {
                 <span className="hero-meta-number">
                   <AnimatedNumber to={90} duration={1400} />
                 </span>
-                <span className="hero-meta-label">Day delivery</span>
+                <span className="hero-meta-label">-day delivery</span>
               </div>
               <div className="hero-meta-divider" />
               <div className="hero-meta-item">
